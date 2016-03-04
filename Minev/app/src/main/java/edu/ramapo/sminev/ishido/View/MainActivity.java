@@ -189,16 +189,6 @@ public class MainActivity extends AppCompatActivity {
         //Cutoff Spinner initialization
         //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
-
-
-        //On click listeners for the boardView
-        /*for(int i=0;i<MAX_ROWS;i++){
-            for(int j=0;j<MAX_COLUMNS;j++){
-                boardView[i][j].setOnClickListener(buttonHandler);
-            }
-        }*/
-
-
         //Update the views after parsing the file
         //gameModel.parseFromFile(whichFile);
         for(int i=0;i<MAX_ROWS;i++){
@@ -210,26 +200,10 @@ public class MainActivity extends AppCompatActivity {
         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                 gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
 
-        humanscoreView.setText(gameModel.getHuman().getScore());
-        computerScoreView.setText(gameModel.getComputer().getScore());
+        humanscoreView.setText(gameModel.getHuman().getScore().toString());
+        computerScoreView.setText(gameModel.getComputer().getScore().toString());
         turnView.append(gameModel.getTurn().getCurrentTurn());
         //setCutoffDropdownValues();
-
-        /*searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 4) {
-                    cutoffSpinner.setVisibility(View.VISIBLE);
-                    cutoffSpinner.performClick();
-                    searchSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
 
         humanscoreView.setText(gameModel.getHuman().getScore().toString());
         computerScoreView.setText(gameModel.getComputer().getScore().toString());
@@ -315,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                                     gameModel.getDeck().getCurrentTile().getShape());
                             //Remove it from the deck
                             gameModel.getDeck().removeCurrentFromDeck();
+                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                    gameModel.getDeck().getCurrentTile().getShape(),currentTileView);
                             //Update the score view
                             humanscoreView.setText(gameModel.getHuman().getScore().toString());
                             //Check if the deck is empty, if not continue

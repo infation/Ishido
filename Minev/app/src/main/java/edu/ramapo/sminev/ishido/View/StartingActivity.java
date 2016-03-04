@@ -166,57 +166,6 @@ public class StartingActivity extends AppCompatActivity {
                     }.start();
 
                 }
-
-                /*for (int i = 0; i < 2000; i++) {
-
-                    System.out.println("Number- " + nextNum);
-                    switch (nextNum) {
-                        case 0:
-                            new CountDownTimer(0, 1000) {
-                                public void onFinish() {
-                                    // When timer is finished
-                                    // Execute your code here
-
-                                }
-
-                                public void onTick(long millisUntilFinished) {
-                                    coinView.setImageResource(R.mipmap.coin_heads);
-                                    // millisUntilFinished    The amount of time until finished.
-                                }
-                            }.start();
-                            /*final Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                }
-                            }, 2000);
-                            break;
-                        case 1:
-                            new CountDownTimer(20000, 1000) {
-                                public void onFinish() {
-                                    // When timer is finished
-                                    // Execute your code here
-
-                                }
-
-                                public void onTick(long millisUntilFinished) {
-                                    // millisUntilFinished    The amount of time until finished.
-                                    coinView.setImageResource(R.mipmap.coin_tails);
-                                }
-                            }.start();
-
-                            /*final Handler handler2 = new Handler();
-                            handler2.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    coinView.setImageResource(R.mipmap.coin_tails);
-                                }
-                            }, 2000);
-                            break;
-                    }
-
-                }*/
                 nextNum = ranNum.nextInt(2);
                 switch (nextNum) {
                     case 0:
@@ -226,8 +175,8 @@ public class StartingActivity extends AppCompatActivity {
                         coinView.setImageResource(R.mipmap.coin_tails);
                         break;
                 }
+
                 if (usersChoice - 1 == nextNum) {
-                    //Toast.makeText(StartingActivity.this, "You have the first move.", Toast.LENGTH_SHORT).show();
                     turn = "Human";
                 } else {
                     turn = "Computer";
