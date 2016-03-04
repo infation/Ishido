@@ -1122,13 +1122,28 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/save_game"
+            android:layout_marginTop="120dp"
+            android:layout_marginLeft="85dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Game"
+            android:background="#ffffff"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:clickable="false"/>
+
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal">
         <TextView
             android:layout_marginLeft="55dp"
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="60dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
@@ -1157,7 +1172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:text="Human Score:"
+                android:text="Computer Score:"
                 android:textColor="#000000"/>
 
             <Button
@@ -1171,19 +1186,30 @@
                 android:gravity="center"
                 android:clickable="false"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:text="Current Tile:"
+                android:textColor="#000000"/>
 
-        <Button
-            android:id="@+id/current_tile"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginLeft="110dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/button_border"
-            android:textSize="60sp"
-            android:gravity="center"
-            android:textColor="#000000"
-            android:clickable="false"
-            />
-
+            <Button
+                android:id="@+id/current_tile"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/button_border"
+                android:textSize="60sp"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:clickable="false" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
