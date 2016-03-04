@@ -13,6 +13,12 @@ public class Human extends Player {
     private Deck humanDeck;
 
     //Constructor which takes a deck and adds the tiles to the human deck.
+    public Human(){
+        super();
+        humanDeck=new Deck();
+    }
+
+
     public Human(Deck deck){
         super();
         humanDeck=new Deck();

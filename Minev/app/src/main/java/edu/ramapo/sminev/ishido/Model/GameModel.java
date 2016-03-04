@@ -26,23 +26,35 @@ which translates the characters into strings.
 public class GameModel {
 
     //Private objects
-    Player player;
+    Turn turn;
+    Human human;
+    Computer computer;
     Deck deck;
     GameBoard board;
    // AISearches ai;
 
     public GameModel(){
-        player=new Player();
+        human=new Human();
+        computer=new Computer();
         deck=new Deck();
         board=new GameBoard();
-
+        turn=new Turn();
     }
 
 
     //Getter for the different models
-    public Player getPlayer() {
-        return player;
+    public Human getHuman(){
+        return human;
     }
+
+    public Computer getComputer(){
+        return computer;
+    }
+
+    public Turn getTurn(){
+        return turn;
+    }
+
     public Deck getDeck() {
         return deck;
     }
@@ -83,7 +95,8 @@ public class GameModel {
                 while ((line = br.readLine()) != null) {
 
                     //If the line is equal to one of those make the previous line to be one of those
-                    if (line.equals("Layout:") || line.equals("Stock:") || line.equals("Score:")) {
+                    if (line.equals("Layout:") || line.equals("Stock:") || line.equals("Score:")||
+                            line.equals("Human Score:")||line.equals("Computer Score:")||line.equals("Next Player:")) {
                         prevLine = line;
                         //If the line is empty string just ignore it
                     } else if (line.equals("")) {
@@ -125,10 +138,17 @@ public class GameModel {
                                     count = count + 3;
                                 }
                                 break;
-                            case "Score:":
+                            case "Human Score:":
                                 //Just parse the character to int
-                                String score = line;
-                                player.setScore(Integer.parseInt(score));
+                                human.setScore(Integer.parseInt(line));
+                                break;
+                            case "Computer Score:":
+                                //Just parse the character to int
+                                human.setScore(Integer.parseInt(line));
+                                break;
+                            case "Next Player:":
+                                //Just parse the character to int
+                                turn.setNextTurn(line);
                                 break;
                             default:
                                 break;

@@ -29,6 +29,10 @@ public class Turn {
         return turn;
     }
 
+    public void setNextTurn(String turn){
+        this.turn=turn;
+    }
+
     //To set the next turn to the human
     public void setNextTurnHuman(){
         turn="Human";
