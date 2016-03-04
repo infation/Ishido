@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
     //The views that display different info
     private Button selectedTileView;
-    private Button scoreView;
+    private Button humanscoreView;
+    private Button computerScoreView;
     private Button nextButton;
 
     //The view of the boardView
@@ -174,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
         //searchSpinner=(Spinner)findViewById(R.id.search_spinner);
 
         //The score preview
-        scoreView=(Button)findViewById(R.id.score_preview);
+        humanscoreView=(Button)findViewById(R.id.humanscore_preview);
+        computerScoreView=(Button)findViewById(R.id.computerscore_preview);
 
         //The chosen tile preview
         selectedTileView = (Button) findViewById(R.id.current_tile);
@@ -226,7 +228,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        scoreView.setText(gameModel.getPlayer().getScore().toString());
+        humanscoreView.setText(gameModel.getPlayer().getScore().toString());
+        computerScoreView.setText(gameModel.getPlayer().getScore().toString());
 
         //ai= new AISearches(gameModel);
 
@@ -255,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                         gameModel.getDeck().getCurrentTile().getShape(), selectedTileView);
-                scoreView.setText(gameModel.getPlayer().getScore().toString());
+                humanscoreView.setText(gameModel.getPlayer().getScore().toString());
 
                 if(gameModel.getDeck().size()==0) {
                     updateTileView("", "", selectedTileView);
