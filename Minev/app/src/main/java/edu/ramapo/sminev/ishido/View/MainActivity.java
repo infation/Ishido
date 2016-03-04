@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.GameModel;
@@ -239,6 +240,12 @@ public class MainActivity extends AppCompatActivity {
         // Set the adapter for the list view
         drawerListView.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_listview_item, drawerListViewItems));
+
+        try {
+            gameModel.saveGame(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         /*nextButton.setOnClickListener(new View.OnClickListener() {

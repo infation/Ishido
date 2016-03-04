@@ -147,6 +147,7 @@ public class StartingActivity extends AppCompatActivity {
 
                         public void onTick(long millisUntilFinished) {
                             coinView.setImageResource(R.mipmap.coin_heads);
+                            //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                             // millisUntilFinished    The amount of time until finished.
                         }
                     }.start();
@@ -161,6 +162,7 @@ public class StartingActivity extends AppCompatActivity {
 
                         public void onTick(long millisUntilFinished) {
                             coinView.setImageResource(R.mipmap.coin_tails);
+                            //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                             // millisUntilFinished    The amount of time until finished.
                         }
                     }.start();
@@ -188,7 +190,7 @@ public class StartingActivity extends AppCompatActivity {
                         Toast.makeText(StartingActivity.this, "The "+turn+" has the first move.", Toast.LENGTH_LONG).show();
                     }
                     public void onTick(long millisUntilFinished) {
-                        Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                     }
                 }.start();
 
@@ -200,7 +202,7 @@ public class StartingActivity extends AppCompatActivity {
                     }
 
                     public void onTick(long millisUntilFinished) {
-                        Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                     }
                 }.start();
 

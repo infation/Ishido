@@ -1,12 +1,17 @@
 package edu.ramapo.sminev.ishido.Model;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /************************************************************
  * Name:  Stanislav Minev                                   *
@@ -213,5 +218,68 @@ public class GameModel {
             default:
                 t.setShape("");
         }
+    }
+
+    /*public void parseInFile(Tile t, char c, char s){
+        switch(t.getColor()){
+            case 'White': ;
+                t.setIsTile(true);
+                break;
+            case '2': t.setColor("Blue");
+                t.setIsTile(true);
+                break;
+            case '3': t.setColor("Green");
+                t.setIsTile(true);
+                break;
+            case '4': t.setColor("Yellow");
+                t.setIsTile(true);
+                break;
+            case '5': t.setColor("Orange");
+                t.setIsTile(true);
+                break;
+            case '6': t.setColor("Red");
+                t.setIsTile(true);
+                break;
+            default:
+                t.setColor("");
+        }
+
+        switch(s){
+            case '1': t.setShape("+");
+                break;
+            case '2': t.setShape("*");
+                break;
+            case '3': t.setShape("%");
+                break;
+            case '4': t.setShape("!");
+                break;
+            case '5': t.setShape("@");
+                break;
+            case '6': t.setShape("?");
+                break;
+            default:
+                t.setShape("");
+        }
+    }*/
+
+    public void saveGame(Context fileContext) throws IOException {
+        String fileName="SavedGame.txt";
+        String filePath=Environment.getExternalStorageDirectory().toString();
+        String line="Layout:";
+
+        File file= new File(filePath,fileName);
+
+        if(!file.exists()) file.delete();
+
+        try {
+            BufferedWriter bufferWriter = new BufferedWriter(new FileWriter(file));
+            bufferWriter.write(line+"\n");
+            bufferWriter.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
