@@ -144,7 +144,7 @@ public class GameModel {
                                 break;
                             case "Computer Score:":
                                 //Just parse the character to int
-                                human.setScore(Integer.parseInt(line));
+                                computer.setScore(Integer.parseInt(line));
                                 break;
                             case "Next Player:":
                                 //Just parse the character to int

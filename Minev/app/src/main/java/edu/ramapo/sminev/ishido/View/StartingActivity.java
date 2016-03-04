@@ -185,7 +185,7 @@ public class StartingActivity extends AppCompatActivity {
 
                 new CountDownTimer(10000, 1000) {
                     public void onFinish() {
-                        Toast.makeText(StartingActivity.this, "The "+turn+" has the first move.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StartingActivity.this, "The "+turn+" has the first move.", Toast.LENGTH_LONG).show();
                     }
                     public void onTick(long millisUntilFinished) {
 

@@ -24,7 +24,7 @@ public class Deck {
 
     //Default constructor, just for instantiation
     public Deck(){
-        deck.add(new Tile("White", "*"));
+        /*deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "!"));
         deck.add(new Tile("White", "!"));
@@ -35,7 +35,7 @@ public class Deck {
         deck.add(new Tile("White", "%"));
         deck.add(new Tile("White", "%"));
         deck.add(new Tile("White", "+"));
-        deck.add(new Tile("White", "+"));
+        deck.add(new Tile("White", "+"));*/
     }
 
     //Getter for the current tile, if the deck is empty, return an empty tile

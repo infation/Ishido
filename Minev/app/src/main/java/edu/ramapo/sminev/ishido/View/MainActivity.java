@@ -1,8 +1,11 @@
 package edu.ramapo.sminev.ishido.View;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -10,9 +13,12 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.GameModel;
 import edu.ramapo.sminev.ishido.Model.Turn;
@@ -56,11 +62,18 @@ public class MainActivity extends AppCompatActivity {
     public GameModel gameModel=new GameModel();
 
     private TextView turnView;
+    private Layout d;
     //private AISearches ai;
 
     //private Spinner searchSpinner;
 
     //private Spinner cutoffSpinner;
+
+    //Drawer for tiles
+    private Vector<String> drawerListViewItems=new Vector<>();
+    private ListView drawerListView;
+    private DrawerLayout drawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
         //Update the views after parsing the file
-        //gameModel.parseFromFile(whichFile);
+        gameModel.parseFromFile("GameState1.txt");
         for(int i=0;i<MAX_ROWS;i++){
             for(int j=0;j<MAX_COLUMNS;j++){
                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
@@ -214,6 +227,28 @@ public class MainActivity extends AppCompatActivity {
                 boardView[i][j].setOnClickListener(boardButtonsHandler);
             }
         }
+
+        drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
+
+        //Setting up the drawer
+        // get list items from strings.xml
+
+        // get list items from strings.xml
+        for(int i=0;i<gameModel.getDeck().size();i++){
+            drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
+
+        }
+
+
+        // get ListView defined in activity_main.xml
+        drawerListView = (ListView) findViewById(R.id.left_drawer);
+        for(int i=0;i<gameModel.getDeck().size();i++) {
+
+        }
+        // Set the adapter for the list view
+        drawerListView.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_listview_item, drawerListViewItems));
+        //drawer.
 
         /*nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
