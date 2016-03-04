@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent=getIntent();
         //String whichFile = intent.getStringExtra(Intent.EXTRA_TEXT);
         String turnStr=intent.getStringExtra("Turn");
-        Turn turn=new Turn(turnStr);
+        gameModel.getTurn().setNextTurn(turnStr);
 
         //Setting up the grid layout view
         boardView[0][0]=(Button)findViewById(R.id.button00);
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         nextButton=(Button)findViewById(R.id.next_button);
 
         turnView=(TextView)findViewById(R.id.turn_view);
-        turnView.append(turn.getCurrentTurn());
+
         //Cutoff Spinner initialization
         //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
@@ -210,6 +210,9 @@ public class MainActivity extends AppCompatActivity {
         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                 gameModel.getDeck().getCurrentTile().getShape(), selectedTileView);
 
+        humanscoreView.setText(gameModel.getHuman().getScore());
+        computerScoreView.setText(gameModel.getComputer().getScore());
+        turnView.append(gameModel.getTurn().getCurrentTurn());
         //setCutoffDropdownValues();
 
         /*searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -228,12 +231,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        humanscoreView.setText(gameModel.getPlayer().getScore().toString());
-        computerScoreView.setText(gameModel.getPlayer().getScore().toString());
+        humanscoreView.setText(gameModel.getHuman().getScore().toString());
+        computerScoreView.setText(gameModel.getComputer().getScore().toString());
 
-        //ai= new AISearches(gameModel);
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        /*nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(endCredits);
                 }
             }
-        });
+        });*/
 
     }
 
@@ -290,19 +291,6 @@ public class MainActivity extends AppCompatActivity {
         cutoffSpinner.setAdapter(cutoffSpinnerAdapter);
     }*/
 
-
-    //Option handler for the option spinner (handles the different selections)
-    /*AdapterView.OnItemSelectedListener searchHandler=(new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    });*/
 
     //Updates the color of the current tile's data and preview
     public void updateTileColor(String color, Button b){
@@ -332,78 +320,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
-   /* public void useTheChosenSearch(){
-
-
-        if(gameModel.getDeck().size()!=0) {
-
-            switch (searchSpinner.getSelectedItemPosition()) {
-                //Select search
-                case 0:
-                    searchSpinner.performClick();
-                    Toast.makeText(MainActivity.this, "PLEASE SELECT A SEARCH ALGORITHM !", Toast.LENGTH_SHORT).show();
-                    break;
-                //Depth first search
-                case 1:
-                    if (ai.DepthFirstSearch(gameModel)) {
-                        searchSpinner.setEnabled(false);
-                    } else {
-                        Toast.makeText(MainActivity.this, "THERE AREN'T ANY AVAILABLE MOVES", Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                //Breadth first search
-                case 2:
-                    if (ai.BreadthFirstSearch(gameModel)) {
-                        searchSpinner.setEnabled(false);
-                    } else {
-                        Toast.makeText(MainActivity.this, "THERE AREN'T ANY AVAILABLE MOVES", Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                //Best first search
-                case 3:
-                    if (ai.BestFirstSearch(gameModel)) {
-                        searchSpinner.setEnabled(false);
-                    } else {
-                        Toast.makeText(MainActivity.this, "THERE AREN'T ANY AVAILABLE MOVES", Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                //Branch and bound
-                case 4:
-                    for (int i = 0; i < MAX_ROWS; i++) {
-                        for (int j = 0; j < MAX_COLUMNS; j++) {
-                            if(gameModel.getBoard().getTileAt(i,j).isBlink()){
-                                gameModel.getBoard().getTileAt(i,j).setBlink(false);
-                            }
-                            boardView[i][j].clearAnimation();
-                        }
-                    }
-
-                    if (cutoffSpinner.getSelectedItemPosition() != 0) {
-                        int cutoff = cutoffSpinner.getSelectedItemPosition();
-                        searchSpinner.setEnabled(false);
-                        if (ai.BranchAndBound(gameModel, cutoff)) {
-                            setCutoffDropdownValues();
-                        } else {
-                            if (cutoffSpinner.getSelectedItemPosition() != 1) {
-                                Toast.makeText(MainActivity.this, "THERE AREN'T ANY AVAILABLE PATHS FOR THAT CUTOFF.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(MainActivity.this, "THERE AREN'T ANY AVAILABLE MOVES.", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, "PLEASE SELECT A CUTOFF.", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
-        else{
-            Toast.makeText(MainActivity.this, "There are no more tiles in the deck.", Toast.LENGTH_SHORT).show();
-        }
-    }*/
-
-
-
 
     //Updates the shape of the current tile's data and preview
     public void updateTileShape(String shape, Button b){
@@ -438,9 +354,5 @@ public class MainActivity extends AppCompatActivity {
     public void updateTileView(String c, String s, Button b){
         updateTileColor(c,b);
         updateTileShape(s,b);
-    }
-
-    public void onClick(){
-
     }
 }
