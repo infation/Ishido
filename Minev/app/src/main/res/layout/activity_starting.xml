@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".View.StartingActivity">
+    <LinearLayout
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#041da6">
+        <LinearLayout
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#f635e405">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffea00"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:padding="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ff9100">
+                    <LinearLayout
+                        android:padding="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#ff0900">
+                        <LinearLayout
+                            android:padding="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#ffffff"
+                            android:orientation="vertical">
+                                <TextView
+                                    android:layout_marginTop="30dp"
+                                    android:layout_marginLeft="265dp"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#000000"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@string/game_rules"
+                                    android:maxLines="25" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+
+
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <Button
+                                                android:id="@+id/new_game"
+                                                android:layout_marginTop="60dp"
+                                                android:layout_marginLeft="360dp"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:background="#ffffff"
+                                                android:textColor="#000000"
+                                                android:text="New Game "
+                                                android:textStyle="bold"
+                                                android:textAllCaps="true"
+                                                android:textSize="25sp"/>
+
+                                            <Button
+                                                android:id="@+id/resume_game"
+                                                android:layout_marginTop="60dp"
+                                                android:layout_marginLeft="50dp"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:background="#ffffff"
+                                                android:textColor="#000000"
+                                                android:text="Resume Game "
+                                                android:textStyle="bold"
+                                                android:textAllCaps="true"
+                                                android:textSize="25sp"/>
+
+                                        </LinearLayout>
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                        <Spinner
+                                            android:visibility="invisible"
+                                            android:id="@+id/coin_spinner"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="50dp"
+                                            android:layout_marginLeft="400dp"
+                                            android:entries="@array/toss">
+                                        </Spinner>
+
+                                        <ImageView
+                                            android:id="@+id/coin_preview"
+                                            android:layout_marginTop="30dp"
+                                            android:layout_marginLeft="70dp"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:background="@drawable/coin"
+                                            android:visibility="invisible">
+                                        </ImageView>
+
+                                    </LinearLayout>
+
+                                    <Button
+                                        android:visibility="invisible"
+                                        android:id="@+id/toss_coin"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Toss!"
+                                        android:textStyle="bold"
+                                        android:background="#Ffffff"
+                                        android:layout_marginTop="20dp"
+                                        android:layout_marginLeft="480dp"/>
+                                    <Spinner
+                                        android:textStyle="bold"
+                                        android:background="#FFFFFF"
+                                        android:id="@+id/files_spinner"
+                                        android:layout_marginTop="20dp"
+                                        android:layout_marginLeft="480dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:entries="@array/files_array"
+                                        android:visibility="invisible">
+                                    </Spinner>
+
+                                </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

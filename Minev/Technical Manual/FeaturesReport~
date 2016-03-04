@@ -1,0 +1,30 @@
+
+			       	    Features Report FOR ISHIDO FOR ONE:
+
+					---------------------------
+					|Creator: Stanislav Minev |
+					|Project: Project 1	  |
+					|Date: 5th February 2016  |
+					---------------------------
+
+					   -------------------
+					   |MISSING FEATURES:|
+					   -------------------
+
+
+	     As long as I know, my game does not have any missing features for this project.
+
+
+					  ----------------------
+					  |ADDITIONAL FEATURES:|
+					  ----------------------				
+
+------------------------------------------------------------------------------------------------------
+	Total available moves: Implemented an interface and algorithms which shows, the total number 				       of moves the user can make after each move. Not so useful for the 				       early stages of the game.If there aren't any it finishes the game.
+------------------------------------------------------------------------------------------------------
+	If any available moves for the current tile: Checks everytime, when a tile is selected if 							     there are any available moves for it. If not it
+						     shows the user a toast stating that.
+
+------------------------------------------------------------------------------------------------------
+
+	Current available tiles in deck: Implemented an interface which shows the current tiles in 						 the deck. 

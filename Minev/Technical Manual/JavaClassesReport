@@ -1,0 +1,43 @@
+  			         
+				JAVA CLASSES DESCRIPTION FOR ISHIDO FOR ONE:
+
+					---------------------------
+					|Creator: Stanislav Minev |
+					|Project: Project 1	  |
+					|Date: 5th February 2016  |
+					---------------------------
+
+------------------------------------------------------------------------------------------------------
+
+	Deck: The class's contains a Vector of 72 tiles in the beginning, containing 2 			tiles of each color/shape combination. Tiles can be searched and removed from the 			deck, but they cannot be set or added.
+
+------------------------------------------------------------------------------------------------------
+		
+
+	GameBoard: The main model class of the game, it contains a 2D array of Tiles and a 			   selectedTile, which is used to store data and update the Preview of the currently 			   selected tile's View. Has to pass row and column to create the object. Also 			   contains a method checkIfLegalMove(), which is used to check if the move at (i,j) 			   position in the matrix is legal and updates the player score if so.
+
+------------------------------------------------------------------------------------------------------
+
+
+	Player:	   A class to hold the current score of a player. Contains Add Points feature, getter 			   and setter for the score.
+
+
+------------------------------------------------------------------------------------------------------
+
+
+	Tile:	A class to represent a tile. It has 3 variables :
+        	    Color - has the color as a string. The default value is an empty string.
+       		    Shape - has the shape as a string. The default value is an empty string.
+        	    isSet - a flag to represent if the tile is set or not. The default value is false;
+    		
+		It's used by GameBoard to set up the board with empty tiles, it's selectedTile and
+    		the deck's custom tiles.
+
+
+------------------------------------------------------------------------------------------------------
+
+
+	CustomColorSpinnerAdapter:   A custom adapter for the color spinner, so as to update the 					     background color of the spinner to the selected item's back color
+
+
+------------------------------------------------------------------------------------------------------

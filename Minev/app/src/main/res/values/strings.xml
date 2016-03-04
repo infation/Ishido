@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Ishido</string>
+    <string name="game_rules">Hello to Ishido Game !\n
+                                    The rules of the game are the following:\n
+                                    There is a 8x12 board. You have a deck of 72 tiles which have, \n
+                                    both color and shape. There are 6 colors you can choose from: \n
+                                    White, Blue, Orange, Green, Yellow and Red, and 6 shapes you can choose from: \n
+                                    @, !, +, ?, %, *. The deck is consisted of 2 of each combination of color and shape.\n
+                                    You can place a tile anywhere on the board, except if you want to place a tile \n
+                                    adjacent to another tile which has a different color or shape. In other words, to score a point, \n
+                                    you have to place a tile next to another tile of similar color or shape. \n
+                                    The point of the game is to score as many points as you can.</string>
+
+    <string-array name="colors_array">
+        <item>"Color "</item>
+        <item>White</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Orange</item>
+        <item>Red</item>
+    </string-array>
+
+    <string-array name="shapes_array">
+        <item>"Shape"</item>
+        <item>"+"</item>
+        <item>"*"</item>
+        <item>"%"</item>
+        <item>"!"</item>
+        <item>"@"</item>
+        <item>"?"</item>
+    </string-array>
+
+    <string-array name="search_options">
+        <item>Select Search</item>
+        <item>DepthFirstSearch</item>
+        <item>BreadthFirstSearch</item>
+        <item>BestFirstSearch</item>
+        <item>BranchAndBound</item>
+
+    </string-array>
+
+    <string-array name="files_array">
+        <item>Select file</item>
+        <item>Case1.txt</item>
+        <item>Case2.txt</item>
+        <item>Case3.txt</item>
+        <item>Case4.txt</item>
+    </string-array>
+
+    <string-array name="toss">
+        <item>Select side</item>
+        <item>Heads</item>
+        <item>Tails</item>
+    </string-array>
+
+</resources>

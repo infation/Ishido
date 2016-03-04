@@ -1,0 +1,143 @@
+
+----------------------------------------LOG FOR ISHIDO GAME FOR ONE----------------------------------
+
+
+20th January:
+	-Setted up android studio for Linux. It was difficult to figure out how to do it, because I'm 		 new in the Linux environment. (1 hour)
+
+	-Inspected the 8-puzzle code and copied some of the it's xml's attributes to get started.
+	 (0.5 hours)
+	
+	-Created Linear layout and inside I made GridLayout with 96 ImageButtons for the board. Added 		 below the Current tile view which is also a ImageButton, but setted its attribute to 		 unclickable. (2 hours)
+
+21st January:
+	- Researched information about the Spinner class. Added 3 Spinners left to the current tile 		  view - Options, Colors and Shapes. Also added in string.xml 3 string arrays with the 		  options that can be chosen for the respective spinner(1.5 hours)
+	
+	- Was figuring out how to populate them with the string arrays for a while. In the end the 		  anwer was android:entries"" attribute.(0.5 hours)
+	
+
+	- Made the look of the board to be centered with the spinners in the android GUI preview.
+	  (0.5 hours)
+
+	- In onCreate setted up the Buttons' Views and the Spinners' Views by getting their 		  id's. However since I didn't implemented an id attribute for the buttons I had to hard code 
+	  for all the buttons.(1 hour)
+
+	- Tried it on the laptop and everything was working, except the view wasn't as it was shown 		  in android studio's preview. Had to make some changes to the margins and padding and also 		  the size of the buttons.(1 hour)
+
+	- Implemented a stylish button_border drawable for the buttons of the board. Had to set up 		  manually an attribute for the backgrounds of the buttons with the new drawable (1 hour).
+
+22nd January:
+	- Had to research how to make a drawable with a painted circle inside the button. In the end 		  made 6 different drawables, each being set to a color of the available tiles. (1 hour)
+
+	- Made two Update classes for the selected tile. Passing the string of the currently selected 		  color and then updating currentTileView with the corresponding drawable. (1 hour)
+
+	- Had to research how to implement a controller for the spinners. Created an onSelectedItem 		  adapter for the color Spinner. It updates the view by calling updateTileColor(). (1 hour)
+
+	- Created an onSelectedItem() adapter for the shapes. However I couldn't set up the text of 		  the currentTileView. Stuck on it at that point. (1 hour)
+
+January 23-24th
+	-Surviving a snowstorm.
+
+25th January:
+	
+	- The problem was in my button. Since it was ImageButton I couldn't set the text of it. 	  Changed it to just a Button and set all the other buttons of the board to Button for later 		  implementation (1 hour)
+
+	- Created an adapter handler for the onSelectedItem for Options Spinner. Implemented 2 cases 		  for Random and Selected. Finally the selectedView was updating properly with each different 		  combination. (0.5 hours)
+
+	- Created an onClickListener handler for the buttons of the board. Tried to make OnClick 		  listener for the buttons, but I was getting a null pointer exception. (0.5 hours)
+
+	- The bug was in that I wasn't initializing all of the buttons and so I had to make two loops 		  to go through the matrix in which I am initializing every button with the buttonHandler. 		  (1 hour)
+
+
+26th January:
+	
+	- Was testing with in the onClick method of the button handler I was setting a color to see 		  if it will change the color of the board square. It wasn't updating it at all. (0.5 hours)
+
+	- The bug was in that in my button handler I wasn't getting the View id and I wasn't 		  comparing it to all of the buttons' ids. Now it was updating the testing color correctly 		  (1 hour)
+
+
+	- Added the functionality of not updating a buttons when it's already set. by setting the 		  boardView to the selectedTileView which had the background set to the drawables I made 	   earlier. Now all buttons are clickable and in the button handler after updating the view of 		  each button the button is set to unclickable. 
+	  (1 hour)
+
+
+27th January:
+		
+	- Added random generation of numbers from 0-5 for setting the selectedView, in the Random 		  option. I didn't thought of any other way, so when selected random option it updates the 		  spinners to their respective positions chosen by the random generator (1 hour) 
+
+	- Now I'm passing the spinners strings to update the View using getSelectedItem().toString() 	 	  and passing it to the updateColor and shape functions. (0.5 hours)
+
+	- Now when Random option is chosen it updates the spinners' visibility to invisible. 
+	  (0.5 hours)
+	
+
+28th January:
+
+	- Started writing the GameBoard Class which will be my model class. However, realized that I 		  need to make a Tile class first. (1 hour)
+
+	- Created Tile class, with color, shape(strings) and isTile(bool) as variables. Created all 		  the setters and getters and also wrote setTile() method which sets all of the above. 
+	  (0.5 hours)
+
+	- Focused on the GameBoard class. Created a matrix of tiles which are set to default(empty 		  strings and false) in the constructor. Added all the needed getters and setters. Also added 		  setTileAt(i,j) which updates the model at i,j in the matrix.  (1 hour)
+
+	- Now in my buttonHandler the model gets updated by the colorSpinners, since they are always 		  set to the proper values of either the randomly chosen tile or for a selected one. 
+	  (0.5 hours)
+
+29th January:
+
+	- Started working on my main method checkIfLegal(), which will be for checking if the move 		  the user is trying to make on the board is legal. Was thinking about its implementation and 		  how to check all that's going on the board (1 hour)
+ 
+	- Added 4 flags for each adjacent tile of the clicked position. They are set to true in the 		  end of the algorithm if all of the adjacent squares are empty or there is a tile with the 		  same color/shape. (0.5 hours)
+
+	- For each of the adjacent squares I'm checking if there is a tile at first, if there isn't 		  then the boolean is true. Then checks if in the model if the tile has the same color/shape. 		  If yes, increase score(which is a variable in the method) and set flag to true. If not 		  false.  (2 hours)
+
+	- Added in xml score TextView and created a scoreView in MainActivity so as to update the 		  score from when I check if legal move. Also added some toasts if the move is not legal. 
+	  (1 hour)
+
+	- Finally tried my algorithm and it was working perfectly, except for the borders. Added 4 		  more if statements in the beginning of the loop which check if the user tries to place a 		  tile near the edges. If yes, that respective flag is set to true. 
+	 (1 hour)
+
+ 	- Since I implemented the method in onCreate(), I decided it will be a better design to put 		  checkIfLegal as a method of GameBoard. Moved everything and adapted my code. 
+	  (0.5 hours)
+
+30th January:
+
+	- Decided to implement a Deck class today and get my random tile from the deck. Created a 
+	  vector of 72 tiles. Hardcoded all the 72 tiles in the constructor while setting them to 		  their respective combinations. (1 hour)
+
+	- Added a removeFromDeck() method which removes the respective tile which was selected. 
+	  (0.5 hours)
+
+	- Now the random generator picks a number from 0-the current size of the deck. 
+	  And updates everything with the tile that was picked. (0.5 hours)
+
+	- Added a current deck size preview which displays the current number of tiles in the deck.
+	  (0.5 hours)
+
+	- For selected tile I have to add a method which checks if the preview is in the deck. 		  Started implementing it, but I had to implement a new method in Deck, because i had only 	     remove() which was searching for the tile, but it removes it in the end. (1 hour)
+
+	- Since the function returns boolean, I implemented it in if statements throughout the whole 		  program, where it needed. (0.5 hours)
+
+1st February:
+
+	- Decided to move my selected tile in the model. So I had to change my code completely in 		  some places as to work with board.selectedTile. (1 hour)
+
+
+2nd February:
+
+	- Added checkIfAvailableMoves which goes through the board and checks if there are any moves 		  left for every tile in the deck. If there aren't any moves then the game is over. (2 hours)
+
+	- Also added an checkCurrentTileMoves() which checks if there are any moves left for the 		  currently selected tile. If not then it shows a toast. Implemented it throughout my whole 		  program (2 hours)
+
+	- Added a Player class which holds the score. Had a problem updating the view though, it was 		  due to I wasn't using a wrapper class with toString() to update it. Now checkIfAvailable 		  gets the player as a variable as well.
+
+4th February:
+
+	- Added an ending activity which gets the score and the number of tiles in the deck that 	   weren't used if any. (1 hour)
+
+	- Added a starting activity to show the rules. It was easy to implement, because there 		  weren't any data that had to be passed. (1 hour)
+
+
+
+5th February:
+	
+	- Made my code look better and fixed a bug where when I select selected tile and then switch 		  to random without placing the selected tile, it was no updating the view. (1 hour)

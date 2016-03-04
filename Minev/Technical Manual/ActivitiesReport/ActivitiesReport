@@ -1,0 +1,33 @@
+
+                             	  ACTIVITY DESCRIPTION FOR ISHIDO FOR ONE:
+
+					---------------------------
+					|Creator: Stanislav Minev |
+					|Project: Project 1	  |
+					|Date: 5th February 2016  |
+					---------------------------
+
+------------------------------------------------------------------------------------------------------
+  StartingActivity:
+
+	-Description: An activity which displays a colorful view. It's main function is to 			      familiarize the user with the rules of Ishido and how to play. 
+
+	-Contains: Preview for the rules of the game and a button("Play Game") which leads to the 		  	   main activity and starts the game.
+
+------------------------------------------------------------------------------------------------------
+  MainActivity:
+
+	-Description: This is the main activity where the user can play the game after getting 			      familiarized with the rules of the game.
+
+	-Contains: Contains a board(8 rows x 12 columns), 1 Spinner for option selection, 1 Spinner 			   to choose from the colors provided, 1 Spinner to choose from the shapes 	 			   provided, a preview of the selected tile, a preview for all the available moves 			   the user can make, a preview of the size of the deck and a preview for the 			   current score. 
+
+------------------------------------------------------------------------------------------------------
+
+  EndCredits:
+
+	-Description: An activity to end the game. To get to this activity there are two options : 			      Either the user used all the tiles, or there weren't any more available moves 			      for the remaining tiles in the deck. It shows a preview congratulating the user 			      with his score and how many tiles he/she didn't use.
+
+	-Contains: A preview with how many points the player scored and how many tiles he didn't use.
+		   Also contains a button("New Game"), which leads the user back to MainActivity 			   where he can play a new game.
+
+------------------------------------------------------------------------------------------------------
