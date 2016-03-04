@@ -191,7 +191,7 @@ public class GameBoard {
     depending on the deck and updates the score if the caller wants to add points to the
     player.*/
 
-    public boolean checkIfLegalMove(int row, int column, GameModel model, int deckIndex, boolean addPointsToPlayer) {
+    public boolean checkIfLegalMove(int row, int column, GameModel model, int deckIndex, String player) {
 
         //setting the temp score to 0 before checking for a legal move
         scoreAfterCheckIfLegal=0;
@@ -202,8 +202,11 @@ public class GameBoard {
                 && checkLeftAdjacent(row, column, model.getDeck(), deckIndex)
                 && checkRightAdjacent(row, column, model.getDeck(), deckIndex)) {
             //If the caller wanted to update the player model...
-            if(addPointsToPlayer){
-                addPointsToPlayerAfterCheckIfLegal(model.getPlayer());
+            if(player.equals("Human")){
+                addPointsToPlayerAfterCheckIfLegal(model.getHuman());
+            }
+            else if(player.equals("Computer")){
+                addPointsToPlayerAfterCheckIfLegal(model.getComputer());
             }
             return true;
         } else return false;

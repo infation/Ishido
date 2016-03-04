@@ -23,7 +23,20 @@ public class Deck {
     private Vector<Tile> deck=new Vector<>();
 
     //Default constructor, just for instantiation
-    public Deck(){}
+    public Deck(){
+        deck.add(new Tile("White", "*"));
+        deck.add(new Tile("White", "*"));
+        deck.add(new Tile("White", "!"));
+        deck.add(new Tile("White", "!"));
+        deck.add(new Tile("White", "@"));
+        deck.add(new Tile("White", "@"));
+        deck.add(new Tile("White", "?"));
+        deck.add(new Tile("White", "?"));
+        deck.add(new Tile("White", "%"));
+        deck.add(new Tile("White", "%"));
+        deck.add(new Tile("White", "+"));
+        deck.add(new Tile("White", "+"));
+    }
 
     //Getter for the current tile, if the deck is empty, return an empty tile
     public Tile getCurrentTile(){

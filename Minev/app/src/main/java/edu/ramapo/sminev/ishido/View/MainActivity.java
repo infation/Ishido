@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public final int MAX_COLUMNS=12;
 
     //The views that display different info
-    private Button selectedTileView;
+    private Button currentTileView;
     private Button humanscoreView;
     private Button computerScoreView;
     private Button nextButton;
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         computerScoreView=(Button)findViewById(R.id.computerscore_preview);
 
         //The chosen tile preview
-        selectedTileView = (Button) findViewById(R.id.current_tile);
+        currentTileView = (Button) findViewById(R.id.current_tile);
 
         //The next button initialization
         nextButton=(Button)findViewById(R.id.next_button);
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                gameModel.getDeck().getCurrentTile().getShape(), selectedTileView);
+                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
 
         humanscoreView.setText(gameModel.getHuman().getScore());
         computerScoreView.setText(gameModel.getComputer().getScore());
@@ -234,6 +234,13 @@ public class MainActivity extends AppCompatActivity {
         humanscoreView.setText(gameModel.getHuman().getScore().toString());
         computerScoreView.setText(gameModel.getComputer().getScore().toString());
 
+        //On click listeners for the boardView
+        for(int i=0;i<MAX_ROWS;i++){
+            for(int j=0;j<MAX_COLUMNS;j++){
+                boardView[i][j].setOnClickListener(boardButtonsHandler);
+            }
+        }
+
         /*nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,11 +265,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                        gameModel.getDeck().getCurrentTile().getShape(), selectedTileView);
+                        gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
                 humanscoreView.setText(gameModel.getPlayer().getScore().toString());
 
                 if(gameModel.getDeck().size()==0) {
-                    updateTileView("", "", selectedTileView);
+                    updateTileView("", "", currentTileView);
                     //Going to the end credits activity
                     Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
                     String message = "Congratulations!\n" +
@@ -290,13 +297,52 @@ public class MainActivity extends AppCompatActivity {
         cutoffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cutoffSpinner.setAdapter(cutoffSpinnerAdapter);
     }*/
+    View.OnClickListener boardButtonsHandler = (new View.OnClickListener() {
 
+        public void onClick(View view) {
+            //Goes through the matrix to find the id, that was clicked
+            for(int i=0;i<MAX_ROWS;i++){
+                for(int j=0;j<MAX_COLUMNS;j++){
+                    if(boardView[i][j].getId()==view.getId()) {
+                        //Check if it's a legal move
+                        if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
+                            //Update the view's background...
+                            boardView[i][j].setBackground(currentTileView.getBackground());
+                            boardView[i][j].setText(currentTileView.getText());
+                            boardView[i][j].setClickable(false);
+                            //Set the tile in the model
+                            gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                    gameModel.getDeck().getCurrentTile().getShape());
+                            //Remove it from the deck
+                            gameModel.getDeck().removeCurrentFromDeck();
+                            //Update the score view
+                            humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                            //Check if the deck is empty, if not continue
+                            if (gameModel.getDeck().size() == 0) {
+                                //Going to the end credits activity
+                                Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                String message = "Congratulations!\n" +
+                                        "You scored " + gameModel.getHuman().getScore().toString() + " points on Ishido.\n" +
+                                        "You used all of the 72 tiles!\n" +
+                                        "Thank you for playing Ishido.\n" +
+                                        "By Stanislav Minev";
+                                endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                startActivity(endCredits);
+                                finish();
+                            }
+                        } else {
+                            Toast.makeText(MainActivity.this, "You can't place the tile there.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        }
+    });
 
     //Updates the color of the current tile's data and preview
-    public void updateTileColor(String color, Button b){
-
+    public void updateTileColor(String color, Button b) {
         switch (color) {
-
             case "White":
                 b.setBackgroundResource(R.drawable.white_tile);
                 break;
@@ -323,9 +369,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Updates the shape of the current tile's data and preview
     public void updateTileShape(String shape, Button b){
-
         switch(shape) {
-
             case "+":
                 b.setText("+");
                 break;
