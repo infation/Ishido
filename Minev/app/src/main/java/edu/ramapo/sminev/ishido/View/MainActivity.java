@@ -281,8 +281,8 @@ public class MainActivity extends AppCompatActivity {
                         //Check if it's a legal move
                         if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
                             //Update the view's background...
-                            boardView[i][j].setBackground(currentTileView.getBackground());
-                            boardView[i][j].setText(currentTileView.getText());
+                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                    gameModel.getDeck().getCurrentTile().getShape(),boardView[i][j]);
                             boardView[i][j].setClickable(false);
                             //Set the tile in the model
                             gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
