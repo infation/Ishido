@@ -220,49 +220,61 @@ public class GameModel {
         }
     }
 
-    /*public void parseInFile(Tile t, char c, char s){
-        switch(t.getColor()){
-            case 'White': ;
-                t.setIsTile(true);
-                break;
-            case '2': t.setColor("Blue");
-                t.setIsTile(true);
-                break;
-            case '3': t.setColor("Green");
-                t.setIsTile(true);
-                break;
-            case '4': t.setColor("Yellow");
-                t.setIsTile(true);
-                break;
-            case '5': t.setColor("Orange");
-                t.setIsTile(true);
-                break;
-            case '6': t.setColor("Red");
-                t.setIsTile(true);
-                break;
-            default:
-                t.setColor("");
-        }
+    public void parseInFile(Tile t, BufferedWriter wr){
+        try {
+            switch (t.getColor()) {
+                case "White":
+                    wr.write('1');
+                    break;
+                case "Blue":
+                    wr.write('2');
+                    break;
+                case "Green":
+                    wr.write('3');
+                    break;
+                case "Yellow":
+                    wr.write('4');
+                    break;
+                case "Orange":
+                    wr.write('5');
+                    break;
+                case "Red":
+                    wr.write('6');
+                    break;
+                default:
+                    wr.write('0');
+            }
 
-        switch(s){
-            case '1': t.setShape("+");
-                break;
-            case '2': t.setShape("*");
-                break;
-            case '3': t.setShape("%");
-                break;
-            case '4': t.setShape("!");
-                break;
-            case '5': t.setShape("@");
-                break;
-            case '6': t.setShape("?");
-                break;
-            default:
-                t.setShape("");
+            switch (t.getShape()) {
+                case "+":
+                    wr.write('1');
+                    break;
+                case "*":
+                    wr.write('2');
+                    break;
+                case "%":
+                    wr.write('3');
+                    break;
+                case "!":
+                    wr.write('4');
+                    break;
+                case "@":
+                    wr.write('5');
+                    break;
+                case "?":
+                    wr.write('6');
+                    break;
+                default:
+                    wr.write('0');
+            }
+            wr.write(' ');
         }
-    }*/
+        catch (IOException e){
 
-    public void saveGame(Context fileContext) throws IOException {
+        }
+    }
+
+    public void saveGame() throws IOException {
         String fileName="SavedGame.txt";
         String filePath=Environment.getExternalStorageDirectory().toString();
         String line="Layout:";
@@ -273,7 +285,20 @@ public class GameModel {
 
         try {
             BufferedWriter bufferWriter = new BufferedWriter(new FileWriter(file));
-            bufferWriter.write(line+"\n");
+            bufferWriter.write(line + "\n");
+            for(int i=0;i<board.getRows();i++){
+                for(int j=0;j<board.getColumns();j++) {
+                    parseInFile(board.getTileAt(i,j),bufferWriter);
+                }
+                bufferWriter.write("\n");
+            }
+            bufferWriter.write("\n"+"\n"+"Stock:"+"\n");
+            for(int i=0;i<deck.size();i++){
+                parseInFile(deck.getTileAt(i),bufferWriter);
+            }
+            bufferWriter.write("\n"+"\n"+"Human Score:"+"\n"+human.getScore().toString());
+            bufferWriter.write("\n"+"\n"+"Computer Score:"+"\n"+computer.getScore().toString());
+            bufferWriter.write("\n"+"\n"+"Next Player:"+"\n"+turn.getCurrentTurn());
             bufferWriter.close();
 
         } catch (FileNotFoundException e) {

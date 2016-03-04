@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private Button humanscoreView;
     private Button computerScoreView;
     private Button nextButton;
+    private Button saveGameButton;
 
     //The view of the boardView
     private Button[][] boardView=new Button[MAX_ROWS][MAX_COLUMNS];
@@ -197,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
 
         //The next button initialization
         nextButton=(Button)findViewById(R.id.next_button);
+        saveGameButton=(Button)findViewById(R.id.save_game);
+
 
         turnView=(TextView)findViewById(R.id.turn_view);
 
@@ -204,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
         //Update the views after parsing the file
-        gameModel.parseFromFile("GameState1.txt");
+        gameModel.parseFromFile("SavedGame.txt");
         for(int i=0;i<MAX_ROWS;i++){
             for(int j=0;j<MAX_COLUMNS;j++){
                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
@@ -241,13 +244,18 @@ public class MainActivity extends AppCompatActivity {
         drawerListView.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_listview_item, drawerListViewItems));
 
-        try {
-            gameModel.saveGame(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
+        saveGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    gameModel.saveGame();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         /*nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
