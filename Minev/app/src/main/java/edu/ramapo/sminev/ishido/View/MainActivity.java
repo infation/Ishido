@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<MAX_ROWS;i++){
                 for(int j=0;j<MAX_COLUMNS;j++){
                     if(boardView[i][j].getId()==view.getId()) {
-                        //If there isnt a tile on the board
+                        //If there isn't a tile on the board
                         if(!gameModel.getBoard().getTileAt(i,j).getIsTile()) {
                             //Check if it's a legal move
                             if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
@@ -322,15 +322,15 @@ public class MainActivity extends AppCompatActivity {
                                 //Update the score view
                                 humanscoreView.setText(gameModel.getHuman().getScore().toString());
 
+                                //drawerListView.removeAllViews();
                                 // get list items from strings.xml
-                                for(int k=0;k<gameModel.getDeck().size();k++){
-                                    drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
-                                }
+                                drawerListViewItems.remove(0);
 
                                 // Set the adapter for the list view
+
                                 drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
                                         R.layout.drawer_listview_item, drawerListViewItems));
-                                
+
 
                                 //Check if the deck is empty, if not continue
                                 if (gameModel.getDeck().size() == 0) {
