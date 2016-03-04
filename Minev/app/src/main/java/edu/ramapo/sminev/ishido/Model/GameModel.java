@@ -127,7 +127,7 @@ public class GameModel {
                                 Tile tempTile;
                                 int count=0;
                                 //Until the end is reached
-                                while(count<boardState.length()) {
+                                while(count<boardState.length()-1) {
                                     //Adding a new tile to the deck
                                     tempTile = new Tile();
                                     updateFromFile(tempTile, boardState.charAt(firstChar), boardState.charAt(secondChar));

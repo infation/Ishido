@@ -188,7 +188,7 @@ public class StartingActivity extends AppCompatActivity {
                         Toast.makeText(StartingActivity.this, "The "+turn+" has the first move.", Toast.LENGTH_LONG).show();
                     }
                     public void onTick(long millisUntilFinished) {
-
+                        Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                     }
                 }.start();
 
@@ -200,7 +200,7 @@ public class StartingActivity extends AppCompatActivity {
                     }
 
                     public void onTick(long millisUntilFinished) {
-
+                        Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
                     }
                 }.start();
 
