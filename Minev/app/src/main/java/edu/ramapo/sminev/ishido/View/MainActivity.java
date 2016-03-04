@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
             for(int j=0;j<MAX_COLUMNS;j++){
                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
                         gameModel.getBoard().getTileAt(i, j).getShape(), boardView[i][j]);
+
             }
         }
         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
@@ -216,10 +217,6 @@ public class MainActivity extends AppCompatActivity {
         humanscoreView.setText(gameModel.getHuman().getScore().toString());
         computerScoreView.setText(gameModel.getComputer().getScore().toString());
         turnView.append(gameModel.getTurn().getCurrentTurn());
-        //setCutoffDropdownValues();
-
-        humanscoreView.setText(gameModel.getHuman().getScore().toString());
-        computerScoreView.setText(gameModel.getComputer().getScore().toString());
 
         //On click listeners for the boardView
         for(int i=0;i<MAX_ROWS;i++){
@@ -228,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        drawerListView = (ListView) findViewById(R.id.left_drawer);
         drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
 
         //Setting up the drawer
@@ -236,19 +234,12 @@ public class MainActivity extends AppCompatActivity {
         // get list items from strings.xml
         for(int i=0;i<gameModel.getDeck().size();i++){
             drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
-
         }
 
-
-        // get ListView defined in activity_main.xml
-        drawerListView = (ListView) findViewById(R.id.left_drawer);
-        for(int i=0;i<gameModel.getDeck().size();i++) {
-
-        }
         // Set the adapter for the list view
         drawerListView.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_listview_item, drawerListViewItems));
-        //drawer.
+
 
         /*nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,38 +304,56 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<MAX_ROWS;i++){
                 for(int j=0;j<MAX_COLUMNS;j++){
                     if(boardView[i][j].getId()==view.getId()) {
-                        //Check if it's a legal move
-                        if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
-                            //Update the view's background...
-                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                    gameModel.getDeck().getCurrentTile().getShape(),boardView[i][j]);
-                            boardView[i][j].setClickable(false);
-                            //Set the tile in the model
-                            gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
-                                    gameModel.getDeck().getCurrentTile().getShape());
-                            //Remove it from the deck
-                            gameModel.getDeck().removeCurrentFromDeck();
-                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                    gameModel.getDeck().getCurrentTile().getShape(),currentTileView);
-                            //Update the score view
-                            humanscoreView.setText(gameModel.getHuman().getScore().toString());
-                            //Check if the deck is empty, if not continue
-                            if (gameModel.getDeck().size() == 0) {
-                                //Going to the end credits activity
-                                Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                                String message = "Congratulations!\n" +
-                                        "You scored " + gameModel.getHuman().getScore().toString() + " points on Ishido.\n" +
-                                        "You used all of the 72 tiles!\n" +
-                                        "Thank you for playing Ishido.\n" +
-                                        "By Stanislav Minev";
-                                endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                                startActivity(endCredits);
-                                finish();
+                        //If there isnt a tile on the board
+                        if(!gameModel.getBoard().getTileAt(i,j).getIsTile()) {
+                            //Check if it's a legal move
+                            if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
+                                //Update the view's background...
+                                updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                        gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
+                                boardView[i][j].setClickable(false);
+                                //Set the tile in the model
+                                gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                        gameModel.getDeck().getCurrentTile().getShape());
+                                //Remove it from the deck
+                                gameModel.getDeck().removeCurrentFromDeck();
+                                updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                        gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                                //Update the score view
+                                humanscoreView.setText(gameModel.getHuman().getScore().toString());
+
+                                // get list items from strings.xml
+                                for(int k=0;k<gameModel.getDeck().size();k++){
+                                    drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
+                                }
+
+                                // Set the adapter for the list view
+                                drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                        R.layout.drawer_listview_item, drawerListViewItems));
+                                
+
+                                //Check if the deck is empty, if not continue
+                                if (gameModel.getDeck().size() == 0) {
+                                    //Going to the end credits activity
+                                    Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                    String message = "Congratulations!\n" +
+                                            "You scored " + gameModel.getHuman().getScore().toString() + " points on Ishido.\n" +
+                                            "You used all of the 72 tiles!\n" +
+                                            "Thank you for playing Ishido.\n" +
+                                            "By Stanislav Minev";
+                                    endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                    startActivity(endCredits);
+                                    finish();
+                                }
+                            } else {
+                                Toast.makeText(MainActivity.this, "You can't place the tile there.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Toast.makeText(MainActivity.this, "You can't place the tile there.",
                                     Toast.LENGTH_SHORT).show();
                         }
+
                     }
                 }
             }
