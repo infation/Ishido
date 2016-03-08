@@ -33,6 +33,15 @@ public class Turn {
         this.turn=turn;
     }
 
+    public void switchTurn(){
+        if(turn.equals("Human")){
+            turn="Computer";
+        }
+        else{
+            turn="Human";
+        }
+    }
+
     //To set the next turn to the human
     public void setNextTurnHuman(){
         turn="Human";

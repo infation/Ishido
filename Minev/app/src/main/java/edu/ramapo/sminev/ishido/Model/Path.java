@@ -81,7 +81,7 @@ public class Path {
     //Adds a location to a path in the end of the path, also updates the total score
     //by adding the new location's score. Have to pass location object.
     public void addLocationToPath(Location l){
-        
+        parent.setLocation(path.get(pathSize()-1));
         path.add(l);
         totalScore=totalScore+l.getScore();
     }

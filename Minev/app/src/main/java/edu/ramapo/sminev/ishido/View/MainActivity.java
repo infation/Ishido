@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
         //Update the views after parsing the file
-        gameModel.parseFromFile("SavedGame.txt");
+        //gameModel.parseFromFile("SavedGame.txt");
         for(int i=0;i<MAX_ROWS;i++){
             for(int j=0;j<MAX_COLUMNS;j++){
                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
@@ -222,12 +222,6 @@ public class MainActivity extends AppCompatActivity {
         computerScoreView.setText(gameModel.getComputer().getScore().toString());
         turnView.append(gameModel.getTurn().getCurrentTurn());
 
-        //On click listeners for the boardView
-        for(int i=0;i<MAX_ROWS;i++){
-            for(int j=0;j<MAX_COLUMNS;j++){
-                boardView[i][j].setOnClickListener(boardButtonsHandler);
-            }
-        }
 
         drawerListView = (ListView) findViewById(R.id.left_drawer);
         drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
@@ -256,47 +250,55 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        /*nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-              // useTheChosenSearch();
-                for (int i = 0; i < MAX_ROWS; i++) {
-                    for (int j = 0; j < MAX_COLUMNS; j++) {
-                        updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
-                                gameModel.getBoard().getTileAt(i, j).getShape(), boardView[i][j]);
-                        if (gameModel.getBoard().getTileAt(i, j).isBlink()) {
-                            Animation mAnimation = new AlphaAnimation(1, 0);
-                            mAnimation.setDuration(380);
-                            mAnimation.setInterpolator(new LinearInterpolator());
-                            mAnimation.setRepeatCount(Animation.INFINITE);
-                            mAnimation.setRepeatMode(Animation.REVERSE);
-                            boardView[i][j].startAnimation(mAnimation);
-                            //gameModel.getBoard().getTileAt(i, j).setBlink(false);
+
+
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (gameModel.getTurn().getCurrentTurn().equals("Human")) {
+                        //On click listeners for the boardView
+                        for (int i = 0; i < MAX_ROWS; i++) {
+                            for (int j = 0; j < MAX_COLUMNS; j++) {
+                                boardView[i][j].setEnabled(true);
+                                boardView[i][j].setOnClickListener(boardButtonsHandler);
+                            }
                         }
-                        else{
-                            boardView[i][j].clearAnimation();
+                        //gameModel.getTurn().switchTurn();
+                        //turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                    } else {
+                        //On click listeners for the boardView
+                        for (int i = 0; i < MAX_ROWS; i++) {
+                            for (int j = 0; j < MAX_COLUMNS; j++) {
+                                boardView[i][j].setEnabled(false);
+                            }
                         }
+                        gameModel.getComputer().MiniMaxWoRec(2, gameModel);
+                        for (int i = 0; i < MAX_ROWS; i++) {
+                            for (int j = 0; j < MAX_COLUMNS; j++) {
+                                updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
+                                        gameModel.getBoard().getTileAt(i, j).getShape(), boardView[i][j]);
+                                if (gameModel.getBoard().getTileAt(i, j).isBlink()) {
+                                    Animation mAnimation = new AlphaAnimation(1, 0);
+                                    mAnimation.setDuration(380);
+                                    mAnimation.setInterpolator(new LinearInterpolator());
+                                    mAnimation.setRepeatCount(Animation.INFINITE);
+                                    mAnimation.setRepeatMode(Animation.REVERSE);
+                                    boardView[i][j].startAnimation(mAnimation);
+                                    //gameModel.getBoard().getTileAt(i, j).setBlink(false);
+                                } else {
+                                    boardView[i][j].clearAnimation();
+                                }
+                            }
+                        }
+                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                        computerScoreView.setText(gameModel.getComputer().getScore().toString());
                     }
+                    gameModel.getTurn().switchTurn();
+                    turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
                 }
-                updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                        gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
-                humanscoreView.setText(gameModel.getPlayer().getScore().toString());
-
-                if(gameModel.getDeck().size()==0) {
-                    updateTileView("", "", currentTileView);
-                    //Going to the end credits activity
-                    Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                    String message = "Congratulations!\n" +
-                            "You scored " + gameModel.getPlayer().getScore().toString() + " points on Ishido.\n" +
-                            "Thank you for playing Ishido.\n" +
-                            "By Stanislav Minev";
-                    endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                    startActivity(endCredits);
-                }
-            }
-        });*/
-
+            });
     }
 
 

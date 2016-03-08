@@ -15,8 +15,6 @@ public class Computer extends Player{
         super();
         //Initializing the vector with the initial node.
         paths=new Vector<Path>();
-        path=new Path();
-        paths.add(path);
     }
 
     //The algorithm with which the computer will play.
@@ -105,7 +103,13 @@ public class Computer extends Player{
     //The algorithm with which the computer will play.
     public void MiniMaxWoRec(int cutoff, GameModel model){
 
-        while(paths.get(0).pathSize()==cutoff){
+        Path root=new Path();
+        paths.add(root);
+
+        Turn turn=new Turn();
+        turn=model.turn;
+
+        while(paths.get(0).pathSize()!=cutoff){
             //A new vector to save the extended paths and then to be passed into the recursive function
             Vector<Path> extendedPaths=new Vector<>();
 
@@ -132,12 +136,20 @@ public class Computer extends Player{
                         if (!model.getBoard().getTileAt(row, column).getIsTile()) {
                             //The checkIfLegal will update the player score and place a tile at that location
                             //remove the current tile in deck and return true
-                            if (model.getBoard().checkIfLegalMove(row, column, model, paths.get(0).pathSize(), "")) {
+                            if (model.getBoard().checkIfLegalMove(row, column, model, path.pathSize(), "")) {
                                 Path tempPath = new Path();
                                 tempPath.changePathTo(path);
-                                Location l = new Location(row, column,model.getBoard().getTempScoreAfterCheckIfLegal());
-                                //Adds a new location to this path
-                                tempPath.addLocationToPath(l);
+                                if(turn.equals("Human")){
+                                    //Adds a new location to this path with negative value
+                                    Location l = new Location(row, column, -model.getBoard().getTempScoreAfterCheckIfLegal());
+                                    tempPath.addLocationToPath(l);
+                                }
+                                else{
+                                    //Adds a new location to this path
+                                    Location l = new Location(row, column, model.getBoard().getTempScoreAfterCheckIfLegal());
+                                    tempPath.addLocationToPath(l);
+                                }
+
                                 //And adds it in the paths vector
                                 extendedPaths.add(tempPath);
                             }
@@ -151,21 +163,35 @@ public class Computer extends Player{
                 }
             }
 
+            //Sticking back those paths in the initial vector for further extension
+            for(int i=0;i<extendedPaths.size();i++){
+                paths.add(extendedPaths.get(i));
+            }
+            System.out.println("The vector size after extending paths is: "+paths.size());
+            //Switching the turn for the next cutoff
+            turn.switchTurn();
         }
 
-
-        Turn turn=new Turn();
-        turn.equals(model.turn);
-        //while(cutoff!=0) {
-        switch (turn.toString()) {
-            case "Human":
-                minimize(model);
-                break;
-            case "Computer":
-                maximize(model);
-                break;
+        //Exiting the loops and all extended paths are saved in the vector with the max values
+        //Time to find the best one.
+        Path bestPath=new Path();
+        bestPath.changePathTo(paths.get(0));
+        for(int i=1;i<paths.size();i++){
+            if(bestPath.getTotalScore()<paths.get(i).getTotalScore()){
+                bestPath.changePathTo(paths.get(i));
+            }
         }
-        //}
+
+        //Now set the board,deck,score to the best first location
+        model.getBoard().setBlinkableTileAt(bestPath.getLocationAtLevel(0).getRow(),
+                bestPath.getLocationAtLevel(0).getColumn(),
+                model.getDeck().getCurrentTile().getColor(),
+                model.getDeck().getCurrentTile().getShape());
+        model.getDeck().removeCurrentFromDeck();
+        model.getComputer().addPoints(bestPath.getLocationAtLevel(0).getScore());
+
+            paths.removeAllElements();
+        System.out.println("The vector size after extending paths is: " + paths.size());
     }
 
 
