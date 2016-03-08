@@ -202,13 +202,6 @@ public class MainActivity extends AppCompatActivity {
             }
             String file=intent.getStringExtra("File");
             gameModel.parseFromFile(file);
-
-            //On click listeners for the boardView
-            for (int i = 0; i < MAX_ROWS; i++) {
-                for (int j = 0; j < MAX_COLUMNS; j++) {
-                    boardView[i][j].setEnabled(false);
-                }
-            }
         }
 
 

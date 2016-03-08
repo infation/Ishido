@@ -69,10 +69,9 @@ public class StartingActivity extends AppCompatActivity {
 
         //Get the text file, depending on whichFile the user chose.
 
-
-        //ArrayAdapter cutoffSpinnerAdapter=new ArrayAdapter<>(MainActivity.this,android.R.layout.simple_spinner_item, cutoffValues);
-       // cutoffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-       // cutoffSpinner.setAdapter(cutoffSpinnerAdapter);
+        ArrayAdapter filePickerAdapter=new ArrayAdapter<String>(StartingActivity.this,android.R.layout.simple_spinner_item, getAllTextFiles());
+        filePickerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filesSpinner.setAdapter(filePickerAdapter);
 
         filesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -192,23 +191,24 @@ public class StartingActivity extends AppCompatActivity {
 
 
 
-    /*private Vector<String> getAllTextFiles()
+    private Vector<String> getAllTextFiles()
     {
+        Vector<String> textFiles=new Vector<>();
         //Finding the sdcard path on the tablet
         File sdcard = Environment.getExternalStorageDirectory().getAbsoluteFile();
         //It have to be matched with the directory in SDCard
-        File file = new File("sdcard");
+        //File file = new File("/storage/sdcard0");
 
-        File[] files=file.listFiles();
+        File[] files=sdcard.listFiles();
 
         for(int i=0; i<files.length; i++)
         {
-            File tempFile = files[i];
-        /*It's assumed that all file in the path are in supported type
-            String filePath = tempFile.getPath();
+            File file = files[i];
+            //It's assumed that all file in the path are in supported type
+            String filePath = file.getPath().substring(17);
             if(filePath.endsWith(".txt")) // Condition to check .txt file extension
-                tFileList.add(filePath);
+                textFiles.add(filePath);
         }
-        return tFileList;
-    }*/
+        return textFiles;
+    }
 }
