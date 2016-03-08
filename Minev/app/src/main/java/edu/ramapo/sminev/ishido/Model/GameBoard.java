@@ -213,6 +213,7 @@ public class GameBoard {
     }
 
 
+
     //Add points to the player's model. Just pass the player model
     public void addPointsToPlayerAfterCheckIfLegal(Player player){
         player.addPoints(scoreAfterCheckIfLegal);

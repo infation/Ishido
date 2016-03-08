@@ -18,11 +18,13 @@ public class Path {
     private Vector<Location> path;
     //The total score of all locations, which means the score of the path
     private int totalScore;
+    private Location parent;
 
     //Default constructor
     public Path(){
         totalScore=0;
         path=new Vector<>();
+        parent=null;
     }
 
     //Gets a location at some level of the search tree. Have to pass index
@@ -32,6 +34,22 @@ public class Path {
             return path.get(index);
         }
         return null;
+    }
+
+    public Location getParent(){
+        return parent;
+    }
+
+    public boolean compareParents(Path path){
+        if(pathSize()!=path.pathSize()&&(parent!=null||path.getParent()!=null)){
+           return false;
+        }
+        else{
+            if(parent.getRow()==path.getParent().getRow()&&parent.getColumn()==path.getParent().getColumn()){
+                return true;
+            }
+            return false;
+        }
     }
 
     //Getter for the total score
@@ -56,13 +74,20 @@ public class Path {
             addLocationToPath(path.getLocationAtLevel(level));
             level++;
         }
+
+        //parent.setLocation(path.getLocationAtLevel(path.pathSize()-1));
     }
 
     //Adds a location to a path in the end of the path, also updates the total score
     //by adding the new location's score. Have to pass location object.
     public void addLocationToPath(Location l){
+        
         path.add(l);
         totalScore=totalScore+l.getScore();
+    }
+
+    public void removeLastLocation(){
+        path.remove(pathSize()-1);
     }
 
 }

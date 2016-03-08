@@ -27,6 +27,12 @@ public class Location {
         score=0;
     }
 
+    Location(int row, int column){
+        this.row=row;
+        this.column=column;
+        score=0;
+    }
+
     //Custom constructor to set a location
     Location(int i, int j, int s){
         row=i;
