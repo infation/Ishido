@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!gameModel.getTurn().equals("Human")) {
+                if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
                         gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
                         for (int i = 0; i < MAX_ROWS; i++) {
@@ -289,14 +289,16 @@ public class MainActivity extends AppCompatActivity {
                         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                                 gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
                         computerScoreView.setText(gameModel.getComputer().getScore().toString());
+                        //System.out.println("Current turn to+" + gameModel.getTurn().getCurrentTurn());
                         gameModel.getTurn().setNextTurnHuman();
+                        //System.out.println("After the switch. +" + gameModel.getTurn().getCurrentTurn());
                         turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-                        //On click listeners for the boardView
+                        /*//On click listeners for the boardView
                         for (int i = 0; i < MAX_ROWS; i++) {
                             for (int j = 0; j < MAX_COLUMNS; j++) {
                                 boardView[i][j].setEnabled(true);
                             }
-                        }
+                        }*/
                     } else {
                         Toast.makeText(MainActivity.this, "Please select a cutoff value.", Toast.LENGTH_SHORT).show();
                         cutoffSpinner.performClick();
@@ -325,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
 
     View.OnClickListener boardButtonsHandler = (new View.OnClickListener() {
         public void onClick(View view) {
-            if(!gameModel.getTurn().equals("Computer")) {
+            if(gameModel.getTurn().getCurrentTurn().equals("Human")) {
                 //Goes through the matrix to find the id, that was clicked
                 for (int i = 0; i < MAX_ROWS; i++) {
                     for (int j = 0; j < MAX_COLUMNS; j++) {
@@ -348,7 +350,11 @@ public class MainActivity extends AppCompatActivity {
                                     //Update the score view
                                     humanscoreView.setText(gameModel.getHuman().getScore().toString());
 
+                                    //System.out.println("Current turn to+" + gameModel.getTurn().getCurrentTurn());
                                     gameModel.getTurn().setNextTurnComputer();
+                                    //System.out.println("After the switch. +" + gameModel.getTurn().getCurrentTurn());
+
+
                                     turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
 
                                     //drawerListView.removeAllViews();

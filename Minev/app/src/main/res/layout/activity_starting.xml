@@ -134,6 +134,7 @@
                                     <Spinner
                                         android:textStyle="bold"
                                         android:background="#FFFFFF"
+                                        android:src="@drawable/button_border"
                                         android:id="@+id/files_spinner"
                                         android:layout_marginTop="20dp"
                                         android:layout_marginLeft="480dp"

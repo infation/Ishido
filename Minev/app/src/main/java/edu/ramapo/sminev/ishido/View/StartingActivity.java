@@ -66,12 +66,12 @@ public class StartingActivity extends AppCompatActivity {
 
         filesSpinner=(Spinner)findViewById(R.id.files_spinner);
 
-
         //Get the text file, depending on whichFile the user chose.
 
         ArrayAdapter filePickerAdapter=new ArrayAdapter<String>(StartingActivity.this,android.R.layout.simple_spinner_item, getAllTextFiles());
         filePickerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filesSpinner.setAdapter(filePickerAdapter);
+        filesSpinner.setBackgroundResource(R.drawable.button_border);
 
         filesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -143,7 +143,7 @@ public class StartingActivity extends AppCompatActivity {
 
                 Toast.makeText(StartingActivity.this, "The " + turn + " has the first move.", Toast.LENGTH_LONG).show();
 
-                new CountDownTimer(15000, 1000) {
+                new CountDownTimer(10000, 1000) {
                     public void onFinish() {
                         Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
                         goToMain.putExtra("ChosenOption", "1");
