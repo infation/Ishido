@@ -106,7 +106,7 @@ public class Computer extends Player{
         Path root=new Path();
         paths.add(root);
 
-        Turn turn=new Turn();
+        Turn turn;
         turn=model.turn;
 
         while(paths.get(0).pathSize()!=cutoff){
@@ -164,8 +164,9 @@ public class Computer extends Player{
             }
 
             //Sticking back those paths in the initial vector for further extension
-            for(int i=0;i<extendedPaths.size();i++){
-                paths.add(extendedPaths.get(i));
+            while(extendedPaths.size()!=0) {
+                    paths.add(extendedPaths.get(0));
+                    extendedPaths.remove(0);
             }
             System.out.println("The vector size after extending paths is: "+paths.size());
             //Switching the turn for the next cutoff
@@ -182,6 +183,8 @@ public class Computer extends Player{
             }
         }
 
+        paths.removeAllElements();
+
         //Now set the board,deck,score to the best first location
         model.getBoard().setBlinkableTileAt(bestPath.getLocationAtLevel(0).getRow(),
                 bestPath.getLocationAtLevel(0).getColumn(),
@@ -189,6 +192,7 @@ public class Computer extends Player{
                 model.getDeck().getCurrentTile().getShape());
         model.getDeck().removeCurrentFromDeck();
         model.getComputer().addPoints(bestPath.getLocationAtLevel(0).getScore());
+        model.getTurn().switchTurn();
 
             paths.removeAllElements();
         System.out.println("The vector size after extending paths is: " + paths.size());

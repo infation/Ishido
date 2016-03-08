@@ -197,6 +197,7 @@ public class StartingActivity extends AppCompatActivity {
                 new CountDownTimer(20000, 2000) {
                     public void onFinish() {
                         Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
+                        goToMain.putExtra("ChosenOption",1);
                         goToMain.putExtra("Turn", turn);
                         startActivity(goToMain);
                     }
@@ -217,6 +218,23 @@ public class StartingActivity extends AppCompatActivity {
                 tossSpinner.setVisibility(View.INVISIBLE);
                 coinView.setVisibility(View.INVISIBLE);
                 filesSpinner.setVisibility(View.VISIBLE);
+                filesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (position != 0) {
+                            Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
+                            goToMain.putExtra("ChosenOption",2);
+                            goToMain.putExtra("File", filesSpinner.getSelectedItem().toString());
+                            startActivity(goToMain);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
             }
         });
 
