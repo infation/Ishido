@@ -37,7 +37,7 @@ public class Turn {
         if(turn.equals("Human")){
             turn="Computer";
         }
-        else{
+        else if (turn.equals("Computer")){
             turn="Human";
         }
     }

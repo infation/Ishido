@@ -62,29 +62,20 @@ public class MainActivity extends AppCompatActivity {
     //The model of the boardViewView
    // private GameBoard gameBoard=new GameBoard(MAX_ROWS,MAX_COLUMNS);
     public GameModel gameModel=new GameModel();
-
     private TextView turnView;
-    private Layout d;
-    //private AISearches ai;
-
-    //private Spinner searchSpinner;
-
-    //private Spinner cutoffSpinner;
+    private Spinner cutoffSpinner;
 
     //Drawer for tiles
     private Vector<String> drawerListViewItems=new Vector<>();
     private ListView drawerListView;
-    private DrawerLayout drawer;
+    //private DrawerLayout drawer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Intent intent=getIntent();
-        //String whichFile = intent.getStringExtra(Intent.EXTRA_TEXT);
-        String chosenOption=intent.getStringExtra("ChosenOption");
 
         //Setting up the grid layout view
         boardView[0][0]=(Button)findViewById(R.id.button00);
@@ -193,18 +184,39 @@ public class MainActivity extends AppCompatActivity {
         turnView=(TextView)findViewById(R.id.turn_view);
 
         //Cutoff Spinner initialization
-        //cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
+        cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
+        //String whichFile = intent.getStringExtra(Intent.EXTRA_TEXT);
+        String chosenOption=intent.getStringExtra("ChosenOption");
         //The chosen option from the starting activity
         //Just set the current turn to whoever won the toss and an empty board
-        if(chosenOption.equals(1)){
+        if(chosenOption.equals("1")){
             String turnStr=intent.getStringExtra("Turn");
             gameModel.getTurn().setNextTurn(turnStr);
+            gameModel.getDeck().shuffleDeck();
         }
         //Parse it if resume game
         else{
+            for(int i=0;i<gameModel.getDeck().size();i++){
+                gameModel.getDeck().removeCurrentFromDeck();
+            }
             String file=intent.getStringExtra("File");
             gameModel.parseFromFile(file);
+
+            //On click listeners for the boardView
+            for (int i = 0; i < MAX_ROWS; i++) {
+                for (int j = 0; j < MAX_COLUMNS; j++) {
+                    boardView[i][j].setEnabled(false);
+                }
+            }
+        }
+
+
+        //On click listeners for the boardView
+        for (int i = 0; i < MAX_ROWS; i++) {
+            for (int j = 0; j < MAX_COLUMNS; j++) {
+                boardView[i][j].setOnClickListener(boardButtonsHandler);
+            }
         }
 
         for(int i=0;i<MAX_ROWS;i++){
@@ -223,22 +235,14 @@ public class MainActivity extends AppCompatActivity {
         turnView.append(gameModel.getTurn().getCurrentTurn());
         //Setting up the drawer
         drawerListView = (ListView) findViewById(R.id.left_drawer);
-        drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
+        //drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
         // get list items from strings.xml
         for(int i=0;i<gameModel.getDeck().size();i++){
             drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
         }
-
         // Set the adapter for the list view
         drawerListView.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_listview_item, drawerListViewItems));
-
-        //On click listeners for the boardView
-        for (int i = 0; i < MAX_ROWS; i++) {
-            for (int j = 0; j < MAX_COLUMNS; j++) {
-                boardView[i][j].setOnClickListener(boardButtonsHandler);
-            }
-        }
 
 
         saveGameButton.setOnClickListener(new View.OnClickListener() {
@@ -257,53 +261,63 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            gameModel.getComputer().MiniMaxWoRec(3, gameModel);
-            for (int i = 0; i < MAX_ROWS; i++) {
-                for (int j = 0; j < MAX_COLUMNS; j++) {
-                    updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
-                            gameModel.getBoard().getTileAt(i, j).getShape(), boardView[i][j]);
-                    if (gameModel.getBoard().getTileAt(i, j).isBlink()) {
-                        Animation mAnimation = new AlphaAnimation(1, 0);
-                        mAnimation.setDuration(380);
-                        mAnimation.setInterpolator(new LinearInterpolator());
-                        mAnimation.setRepeatCount(Animation.INFINITE);
-                        mAnimation.setRepeatMode(Animation.REVERSE);
-                        boardView[i][j].startAnimation(mAnimation);
-                        //gameModel.getBoard().getTileAt(i, j).setBlink(false);
+                if (!gameModel.getTurn().equals("Human")) {
+                    if (cutoffSpinner.getSelectedItemPosition() != 0) {
+                        gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
+                        for (int i = 0; i < MAX_ROWS; i++) {
+                            for (int j = 0; j < MAX_COLUMNS; j++) {
+                                updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
+                                        gameModel.getBoard().getTileAt(i, j).getShape(), boardView[i][j]);
+                                if (gameModel.getBoard().getTileAt(i, j).isBlink()) {
+                                    Animation mAnimation = new AlphaAnimation(1, 0);
+                                    mAnimation.setDuration(380);
+                                    mAnimation.setInterpolator(new LinearInterpolator());
+                                    mAnimation.setRepeatCount(Animation.INFINITE);
+                                    mAnimation.setRepeatMode(Animation.REVERSE);
+                                    boardView[i][j].startAnimation(mAnimation);
+                                    //gameModel.getBoard().getTileAt(i, j).setBlink(false);
+                                } else {
+                                    boardView[i][j].clearAnimation();
+                                }
+                            }
+                        }
+                        if (gameModel.getDeck().size() == 0) {
+                            //Going to the end credits activity
+                            Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                            String message = "Congratulations!\n" +
+                                    "You scored " + gameModel.getHuman().getScore().toString() + " points on Ishido.\n" +
+                                    "You used all of the 72 tiles!\n" +
+                                    "Thank you for playing Ishido.\n" +
+                                    "By Stanislav Minev";
+                            endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                            startActivity(endCredits);
+                            finish();
+                        }
+                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                        computerScoreView.setText(gameModel.getComputer().getScore().toString());
+                        gameModel.getTurn().setNextTurnHuman();
+                        turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                        //On click listeners for the boardView
+                        for (int i = 0; i < MAX_ROWS; i++) {
+                            for (int j = 0; j < MAX_COLUMNS; j++) {
+                                boardView[i][j].setEnabled(true);
+                            }
+                        }
                     } else {
-                        boardView[i][j].clearAnimation();
+                        Toast.makeText(MainActivity.this, "Please select a cutoff value.", Toast.LENGTH_SHORT).show();
+                        cutoffSpinner.performClick();
                     }
                 }
-            }
-            if (gameModel.getDeck().size() == 0) {
-                //Going to the end credits activity
-                Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                String message = "Congratulations!\n" +
-                        "You scored " + gameModel.getHuman().getScore().toString() + " points on Ishido.\n" +
-                        "You used all of the 72 tiles!\n" +
-                        "Thank you for playing Ishido.\n" +
-                        "By Stanislav Minev";
-                endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                startActivity(endCredits);
-                finish();
-            }
-            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                    gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
-            computerScoreView.setText(gameModel.getComputer().getScore().toString());
-            //gameModel.getTurn().switchTurn();
-            turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-            //On click listeners for the boardView
-            for (int i = 0; i < MAX_ROWS; i++) {
-                for (int j = 0; j < MAX_COLUMNS; j++) {
-                    boardView[i][j].setEnabled(true);
+                else {
+                    Toast.makeText(MainActivity.this, "You have the next turn !", Toast.LENGTH_SHORT).show();
                 }
-            }
             }
         });
     }
 
 
-    /*public void setCutoffDropdownValues(){
+    public void setCutoffDropdownValues(){
         String[] cutoffValues=new String[gameModel.getDeck().size()+1];
         cutoffValues[0]="Cutoff";
         for(Integer i=1;i<gameModel.getDeck().size();i++){
@@ -314,82 +328,88 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter cutoffSpinnerAdapter=new ArrayAdapter<>(MainActivity.this,android.R.layout.simple_spinner_item, cutoffValues);
         cutoffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cutoffSpinner.setAdapter(cutoffSpinnerAdapter);
-    }*/
+    }
 
     View.OnClickListener boardButtonsHandler = (new View.OnClickListener() {
         public void onClick(View view) {
-            //Goes through the matrix to find the id, that was clicked
-            for(int i=0;i<MAX_ROWS;i++){
-                for(int j=0;j<MAX_COLUMNS;j++){
-                    if(boardView[i][j].getId()==view.getId()) {
-                        //If there isn't a tile on the board
-                        if(!gameModel.getBoard().getTileAt(i,j).getIsTile()) {
-                            //Check if it's a legal move
-                            if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
-                                //Update the view's background...
-                                updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                        gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
-                                boardView[i][j].setClickable(false);
-                                //Set the tile in the model
-                                gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
-                                        gameModel.getDeck().getCurrentTile().getShape());
-                                //Remove it from the deck
-                                gameModel.getDeck().removeCurrentFromDeck();
-                                updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                        gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
-                                //Update the score view
-                                humanscoreView.setText(gameModel.getHuman().getScore().toString());
+            if(!gameModel.getTurn().equals("Computer")) {
+                //Goes through the matrix to find the id, that was clicked
+                for (int i = 0; i < MAX_ROWS; i++) {
+                    for (int j = 0; j < MAX_COLUMNS; j++) {
+                        if (boardView[i][j].getId() == view.getId()) {
+                            //If there isn't a tile on the board
+                            if (!gameModel.getBoard().getTileAt(i, j).getIsTile()) {
+                                //Check if it's a legal move
+                                if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
+                                    //Update the view's background...
+                                    updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                            gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
+                                    boardView[i][j].setClickable(false);
+                                    //Set the tile in the model
+                                    gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                            gameModel.getDeck().getCurrentTile().getShape());
+                                    //Remove it from the deck
+                                    gameModel.getDeck().removeCurrentFromDeck();
+                                    updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                            gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                                    //Update the score view
+                                    humanscoreView.setText(gameModel.getHuman().getScore().toString());
 
-                                gameModel.getTurn().switchTurn();
-                                turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                                    gameModel.getTurn().setNextTurnComputer();
+                                    turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
 
-                                //drawerListView.removeAllViews();
-                                // get list items from strings.xml
-                                drawerListViewItems.remove(0);
+                                    //drawerListView.removeAllViews();
+                                    // get list items from strings.xml
+                                    drawerListViewItems.remove(0);
 
-                                // Set the adapter for the list view
+                                    // Set the adapter for the list view
 
-                                drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
-                                        R.layout.drawer_listview_item, drawerListViewItems));
+                                    drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                            R.layout.drawer_listview_item, drawerListViewItems));
 
+                                    cutoffSpinner.setVisibility(View.VISIBLE);
+                                    setCutoffDropdownValues();
 
-                                //Check if the deck is empty, if not continue
-                                if (gameModel.getDeck().size() == 0) {
-                                    if(gameModel.getHuman().getScore()>gameModel.getComputer().getScore()) {
-                                        //Going to the end credits activity
-                                        Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                                        String message = "Congratulations YOU WON!\n" +
-                                                "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
-                                                "Thank you for playing Ishido.\n" +
-                                                "By Stanislav Minev";
-                                        endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                                        startActivity(endCredits);
-                                        finish();
+                                    //Check if the deck is empty, if not continue
+                                    if (gameModel.getDeck().size() == 0) {
+                                        if (gameModel.getHuman().getScore() > gameModel.getComputer().getScore()) {
+                                            //Going to the end credits activity
+                                            Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                            String message = "Congratulations YOU WON!\n" +
+                                                    "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
+                                                    "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                    "Thank you for playing Ishido.\n" +
+                                                    "By Stanislav Minev";
+                                            endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                            startActivity(endCredits);
+                                            finish();
+                                        } else {
+                                            Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                            String message = "YOU LOST!\n" +
+                                                    "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
+                                                    "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                    "Thank you for playing Ishido.\n" +
+                                                    "By Stanislav Minev";
+                                            endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                            startActivity(endCredits);
+                                            finish();
+                                        }
                                     }
-                                    else{
-                                        Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                                        String message = "YOU LOST!\n" +
-                                                "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
-                                                "Thank you for playing Ishido.\n" +
-                                                "By Stanislav Minev";
-                                        endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                                        startActivity(endCredits);
-                                        finish();
-                                    }
+                                } else {
+                                    Toast.makeText(MainActivity.this, "You can't place the tile there.",
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Toast.makeText(MainActivity.this, "You can't place the tile there.",
                                         Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(MainActivity.this, "You can't place the tile there.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
 
+                        }
                     }
                 }
+            }
+            else{
+                Toast.makeText(MainActivity.this, "The computer has the next turn. Click next to let it play !", Toast.LENGTH_SHORT).show();
             }
         }
     });

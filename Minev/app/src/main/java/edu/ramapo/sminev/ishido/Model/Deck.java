@@ -1,5 +1,6 @@
 package edu.ramapo.sminev.ishido.Model;
 
+import java.util.Random;
 import java.util.Vector;
 
 /************************************************************
@@ -35,7 +36,78 @@ public class Deck {
         deck.add(new Tile("White", "%"));
         deck.add(new Tile("White", "%"));
         deck.add(new Tile("White", "+"));
-        deck.add(new Tile("White", "+"));
+        deck.add(new Tile("Blue", "+"));
+        deck.add(new Tile("Blue", "*"));
+        deck.add(new Tile("Blue", "!"));
+        deck.add(new Tile("Blue", "!"));
+        deck.add(new Tile("Blue", "@"));
+        deck.add(new Tile("Blue", "@"));
+        deck.add(new Tile("Blue", "?"));
+        deck.add(new Tile("Blue", "?"));
+        deck.add(new Tile("Blue", "%"));
+        deck.add(new Tile("Blue", "%"));
+        deck.add(new Tile("Blue", "+"));
+        deck.add(new Tile("Blue", "+"));
+        deck.add(new Tile("Blue", "+"));
+        deck.add(new Tile("Red", "*"));
+        deck.add(new Tile("Red", "*"));
+        deck.add(new Tile("Red", "!"));
+        deck.add(new Tile("Red", "!"));
+        deck.add(new Tile("Red", "@"));
+        deck.add(new Tile("Red", "@"));
+        deck.add(new Tile("Red", "?"));
+        deck.add(new Tile("Red", "?"));
+        deck.add(new Tile("Red", "%"));
+        deck.add(new Tile("Red", "%"));
+        deck.add(new Tile("Red", "+"));
+        deck.add(new Tile("Red", "+"));
+        deck.add(new Tile("Yellow", "*"));
+        deck.add(new Tile("Yellow", "*"));
+        deck.add(new Tile("Yellow", "!"));
+        deck.add(new Tile("Yellow", "!"));
+        deck.add(new Tile("Yellow", "@"));
+        deck.add(new Tile("Yellow", "@"));
+        deck.add(new Tile("Yellow", "?"));
+        deck.add(new Tile("Yellow", "?"));
+        deck.add(new Tile("Yellow", "%"));
+        deck.add(new Tile("Yellow", "%"));
+        deck.add(new Tile("Yellow", "+"));
+        deck.add(new Tile("Yellow", "+"));
+        deck.add(new Tile("Orange", "+"));
+        deck.add(new Tile("Orange", "*"));
+        deck.add(new Tile("Orange", "!"));
+        deck.add(new Tile("Orange", "!"));
+        deck.add(new Tile("Orange", "@"));
+        deck.add(new Tile("Orange", "@"));
+        deck.add(new Tile("Orange", "?"));
+        deck.add(new Tile("Orange", "?"));
+        deck.add(new Tile("Orange", "%"));
+        deck.add(new Tile("Orange", "%"));
+        deck.add(new Tile("Orange", "+"));
+        deck.add(new Tile("Orange", "+"));
+        deck.add(new Tile("Green", "*"));
+        deck.add(new Tile("Green", "*"));
+        deck.add(new Tile("Green", "!"));
+        deck.add(new Tile("Green", "!"));
+        deck.add(new Tile("Green", "@"));
+        deck.add(new Tile("Green", "@"));
+        deck.add(new Tile("Green", "?"));
+        deck.add(new Tile("Green", "?"));
+        deck.add(new Tile("Green", "%"));
+        deck.add(new Tile("Green", "%"));
+        deck.add(new Tile("Green", "+"));
+        deck.add(new Tile("Green", "+"));
+    }
+
+    public void shuffleDeck(){
+        for(int i=0;i<10000;i++){
+            Random rand=new Random();
+            int removeIndex=rand.nextInt(72);
+            Tile tempTile=new Tile(deck.get(removeIndex).getColor(),deck.get(removeIndex).getShape());
+            deck.remove(removeIndex);
+            int insertIndex=rand.nextInt(72);
+            deck.add(insertIndex,tempTile);
+        }
     }
 
     //Getter for the current tile, if the deck is empty, return an empty tile

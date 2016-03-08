@@ -73,6 +73,7 @@ public class GameModel {
 
         //Finding the sdcard path on the tablet
         File sdcard = Environment.getExternalStorageDirectory().getAbsoluteFile();
+        System.out.println(sdcard);
         //Get the text file, depending on whichFile the user chose.
         File textFile = new File(sdcard, whichFile);
         //Initialize string builder

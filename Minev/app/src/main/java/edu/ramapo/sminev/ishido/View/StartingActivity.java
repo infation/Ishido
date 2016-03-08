@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,7 +21,9 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.Random;
+import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.Turn;
 import edu.ramapo.sminev.ishido.R;
@@ -61,6 +65,15 @@ public class StartingActivity extends AppCompatActivity {
 
 
         filesSpinner=(Spinner)findViewById(R.id.files_spinner);
+
+
+        //Get the text file, depending on whichFile the user chose.
+
+
+        //ArrayAdapter cutoffSpinnerAdapter=new ArrayAdapter<>(MainActivity.this,android.R.layout.simple_spinner_item, cutoffValues);
+       // cutoffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       // cutoffSpinner.setAdapter(cutoffSpinnerAdapter);
+
         filesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -113,62 +126,7 @@ public class StartingActivity extends AppCompatActivity {
                 tossSpinner.setEnabled(false);
                 int usersChoice = tossSpinner.getSelectedItemPosition();
                 final Random ranNum = new Random();
-                int nextNum ;
-                /*
-                for (int i = 0; i < 20000; i++) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-
-                            nextNum = ranNum.nextInt(2);
-                            System.out.println("Number- " + nextNum);
-                            switch(nextNum) {
-                                case 0:
-                                    coinView.setImageResource(R.mipmap.coin_heads);
-                                    break;
-                                case 1:
-                                    coinView.setImageResource(R.mipmap.coin_tails);
-                                    break;
-                            }
-                            numPicked=nextNum;
-                        }
-                    },100);
-                }
-            }*/
-                for (int i = 0; i < 1000; i++) {
-                    new CountDownTimer(10000, 1000) {
-                        public void onFinish() {
-                            // When timer is finished
-                            // Execute your code here
-
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                            coinView.setImageResource(R.mipmap.coin_heads);
-                            //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
-                            // millisUntilFinished    The amount of time until finished.
-                        }
-                    }.start();
-
-
-                    new CountDownTimer(10000, 1000) {
-                        public void onFinish() {
-                            // When timer is finished
-                            // Execute your code here
-
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                            coinView.setImageResource(R.mipmap.coin_tails);
-                            //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
-                            // millisUntilFinished    The amount of time until finished.
-                        }
-                    }.start();
-
-                }
-                nextNum = ranNum.nextInt(2);
+                int nextNum = ranNum.nextInt(2);
                 switch (nextNum) {
                     case 0:
                         coinView.setImageResource(R.mipmap.coin_heads);
@@ -184,20 +142,12 @@ public class StartingActivity extends AppCompatActivity {
                     turn = "Computer";
                 }
 
+                Toast.makeText(StartingActivity.this, "The " + turn + " has the first move.", Toast.LENGTH_LONG).show();
 
-                new CountDownTimer(10000, 1000) {
-                    public void onFinish() {
-                        Toast.makeText(StartingActivity.this, "The "+turn+" has the first move.", Toast.LENGTH_LONG).show();
-                    }
-                    public void onTick(long millisUntilFinished) {
-                        //Toast.makeText(StartingActivity.this, "FLIPPING THE COIN", Toast.LENGTH_SHORT).show();
-                    }
-                }.start();
-
-                new CountDownTimer(20000, 2000) {
+                new CountDownTimer(15000, 1000) {
                     public void onFinish() {
                         Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
-                        goToMain.putExtra("ChosenOption",1);
+                        goToMain.putExtra("ChosenOption", "1");
                         goToMain.putExtra("Turn", turn);
                         startActivity(goToMain);
                     }
@@ -223,7 +173,7 @@ public class StartingActivity extends AppCompatActivity {
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (position != 0) {
                             Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
-                            goToMain.putExtra("ChosenOption",2);
+                            goToMain.putExtra("ChosenOption","2");
                             goToMain.putExtra("File", filesSpinner.getSelectedItem().toString());
                             startActivity(goToMain);
                         }
@@ -239,4 +189,26 @@ public class StartingActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+    /*private Vector<String> getAllTextFiles()
+    {
+        //Finding the sdcard path on the tablet
+        File sdcard = Environment.getExternalStorageDirectory().getAbsoluteFile();
+        //It have to be matched with the directory in SDCard
+        File file = new File("sdcard");
+
+        File[] files=file.listFiles();
+
+        for(int i=0; i<files.length; i++)
+        {
+            File tempFile = files[i];
+        /*It's assumed that all file in the path are in supported type
+            String filePath = tempFile.getPath();
+            if(filePath.endsWith(".txt")) // Condition to check .txt file extension
+                tFileList.add(filePath);
+        }
+        return tFileList;
+    }*/
 }
