@@ -141,10 +141,11 @@ public class Computer extends Player{
                                 tempPath.changePathTo(path);
 
                                 //System.out.println("Total Score of the path = "+tempPath.getTotalScore());
-                                if(turn.equals("Human")){
+                                if(turn.getCurrentTurn().equals("Human")){
                                     //Adds a new location to this path with negative value
-                                    int minimizer=0-model.getBoard().getTempScoreAfterCheckIfLegal();
-                                    Location l = new Location(row, column,minimizer);
+                                     //Integer minimizer=0
+                                    System.out.println("The minimizer scores : "+ -model.getBoard().getTempScoreAfterCheckIfLegal());
+                                    Location l = new Location(row, column,-model.getBoard().getTempScoreAfterCheckIfLegal());
                                     tempPath.addLocationToPath(l);
                                 }
                                 else{
@@ -172,14 +173,7 @@ public class Computer extends Player{
                     extendedPaths.remove(0);
             }
             System.out.println("The vector size after extending paths is: "+paths.size());
-            //Switching the turn for the next cutoff
-            if(turn.equals("Human")){
-                turn.setNextTurnComputer();
-            }
-            else{
-                turn.setNextTurnHuman();
-            }
-            //turn.switchTurn();
+            turn.switchTurn();
         }
 
         //Exiting the loops and all extended paths are saved in the vector with the max values
@@ -201,7 +195,6 @@ public class Computer extends Player{
                 model.getDeck().getCurrentTile().getShape());
         model.getDeck().removeCurrentFromDeck();
         model.getComputer().addPoints(bestPath.getLocationAtLevel(0).getScore());
-        //model.getTurn().switchTurn();
         System.out.println("Total Score of the best path = "+bestPath.getTotalScore());
     }
 

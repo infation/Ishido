@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                                 gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
                         computerScoreView.setText(gameModel.getComputer().getScore().toString());
                         //System.out.println("Current turn to+" + gameModel.getTurn().getCurrentTurn());
-                        gameModel.getTurn().setNextTurnHuman();
+                        gameModel.getTurn().switchTurn();
                         //System.out.println("After the switch. +" + gameModel.getTurn().getCurrentTurn());
                         turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
                         /*//On click listeners for the boardView
@@ -350,19 +350,11 @@ public class MainActivity extends AppCompatActivity {
                                     //Update the score view
                                     humanscoreView.setText(gameModel.getHuman().getScore().toString());
 
-                                    //System.out.println("Current turn to+" + gameModel.getTurn().getCurrentTurn());
-                                    gameModel.getTurn().setNextTurnComputer();
-                                    //System.out.println("After the switch. +" + gameModel.getTurn().getCurrentTurn());
-
-
+                                    gameModel.getTurn().switchTurn();
                                     turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-
-                                    //drawerListView.removeAllViews();
                                     // get list items from strings.xml
                                     drawerListViewItems.remove(0);
-
                                     // Set the adapter for the list view
-
                                     drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
                                             R.layout.drawer_listview_item, drawerListViewItems));
 
