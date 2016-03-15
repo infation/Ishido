@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
         //Just set the current turn to whoever won the toss and an empty board
         if(chosenOption.equals("1")){
             String turnStr=intent.getStringExtra("Turn");
+            if(turnStr.equals("Computer")){
+                setCutoffDropdownValues();
+            }
             gameModel.getTurn().setNextTurn(turnStr);
             gameModel.getDeck().shuffleDeck();
         }
@@ -209,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < MAX_ROWS; i++) {
             for (int j = 0; j < MAX_COLUMNS; j++) {
                 boardView[i][j].setOnClickListener(boardButtonsHandler);
+                cutoffSpinner.setVisibility(View.VISIBLE);
             }
         }
 
@@ -396,6 +400,13 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                         }
+                    }
+                }
+                for(int i=0;i<MAX_ROWS;i++){
+                    for(int j=0;j<MAX_COLUMNS;j++){
+                        boardView[i][j].clearAnimation();
+                        gameModel.getBoard().setTileAt(i,j,gameModel.getBoard().getTileAt(i,j).getColor(),
+                                gameModel.getBoard().getTileAt(i,j).getShape());
                     }
                 }
             }

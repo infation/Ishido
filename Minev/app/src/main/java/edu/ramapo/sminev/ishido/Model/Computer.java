@@ -18,9 +18,7 @@ public class Computer extends Player{
     }
 
     //The algorithm with which the computer will play.
-    /*public void MiniMax(int cutoff, GameModel model, Vector<Path> paths){
-
-
+   /* public void MiniMax(int cutoff, GameModel model, Vector<Path> paths){
 
         //Base case for the recursive algorithm, when we reached the leaf nodes.
         if(paths.get(0).pathSize()==cutoff){

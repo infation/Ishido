@@ -143,7 +143,7 @@ public class StartingActivity extends AppCompatActivity {
 
                 Toast.makeText(StartingActivity.this, "The " + turn + " has the first move.", Toast.LENGTH_LONG).show();
 
-                new CountDownTimer(10000, 1000) {
+                new CountDownTimer(5000, 500) {
                     public void onFinish() {
                         Intent goToMain = new Intent(StartingActivity.this, MainActivity.class);
                         goToMain.putExtra("ChosenOption", "1");
