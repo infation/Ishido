@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
             String turnStr=intent.getStringExtra("Turn");
             if(turnStr.equals("Computer")){
                 setCutoffDropdownValues();
+                cutoffSpinner.setVisibility(View.VISIBLE);
             }
             gameModel.getTurn().setNextTurn(turnStr);
             gameModel.getDeck().shuffleDeck();
@@ -212,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < MAX_ROWS; i++) {
             for (int j = 0; j < MAX_COLUMNS; j++) {
                 boardView[i][j].setOnClickListener(boardButtonsHandler);
-                cutoffSpinner.setVisibility(View.VISIBLE);
             }
         }
 
@@ -405,8 +405,7 @@ public class MainActivity extends AppCompatActivity {
                 for(int i=0;i<MAX_ROWS;i++){
                     for(int j=0;j<MAX_COLUMNS;j++){
                         boardView[i][j].clearAnimation();
-                        gameModel.getBoard().setTileAt(i,j,gameModel.getBoard().getTileAt(i,j).getColor(),
-                                gameModel.getBoard().getTileAt(i,j).getShape());
+                        gameModel.getBoard().getTileAt(i,j).setBlink(false);
                     }
                 }
             }

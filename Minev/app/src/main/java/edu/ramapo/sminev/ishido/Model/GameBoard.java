@@ -1,6 +1,8 @@
 package edu.ramapo.sminev.ishido.Model;
 
 
+import java.util.Vector;
+
 /************************************************************
  * Name:  Stanislav Minev                                   *
  * Project:  Project 2                                      *
@@ -21,7 +23,7 @@ which just sets the the square to an empty square
 public class GameBoard {
     //The board
     private final int ROWS=8;
-    private final int MAX_COLUMNS=12;
+    private final int COLUMNS=12;
     private Tile[][] board;
     //This is a score just to keep track of the points after the user got
     // after using checkIfLegalMove()
@@ -30,9 +32,9 @@ public class GameBoard {
     //Constructor.. Need to pass row and column
     public GameBoard(){
         //Initialize the board and the tempScore
-        board=new Tile[ROWS][MAX_COLUMNS];
+        board=new Tile[ROWS][COLUMNS];
         for(int row=0;row<ROWS;row++) {
-            for (int column = 0; column < MAX_COLUMNS; column++) {
+            for (int column = 0; column < COLUMNS; column++) {
                 board[row][column] = new Tile();
             }
         }
@@ -54,7 +56,7 @@ public class GameBoard {
         return ROWS;
     }
     public int getColumns(){
-        return MAX_COLUMNS;
+        return COLUMNS;
     }
 
     //To set a tile at a particular location
@@ -160,7 +162,7 @@ public class GameBoard {
     public boolean checkRightAdjacent(int row, int column, Deck deck, int deckIndex) {
         boolean right = false;
 
-        if (column + 1 == MAX_COLUMNS) {
+        if (column + 1 == COLUMNS) {
             right = true;
             return right;
         }
@@ -212,7 +214,36 @@ public class GameBoard {
         } else return false;
     }
 
+    public boolean checkIfLegalMove(int row, int column, Deck deck, int deckIndex) {
 
+        //Check if all of the adjacent squares are okay for the next tile to be placed
+        if (checkTopAdjacent(row, column, deck, deckIndex)
+                && checkBottomAdjacent(row, column, deck, deckIndex)
+                && checkLeftAdjacent(row, column, deck, deckIndex)
+                && checkRightAdjacent(row, column, deck, deckIndex)) {
+            return true;
+        } else return false;
+    }
+
+
+    public Vector<Location> generateAvailableLocations(int deckIndex, Deck deck){
+        Vector<Location> locations=new Vector<>();
+        //Basically adds the newly extended paths of the old vector-1 to the new one.
+        for (int row = 0; row < ROWS; row++) {
+            for (int column = 0; column < COLUMNS; column++) {
+                //Is the particular button clickable? If not then there is a tile
+                if (!getTileAt(row, column).getIsTile()) {
+                    //The checkIfLegal will update the player score and place a tile at that location
+                    //remove the current tile in deck and return true
+                    if (checkIfLegalMove(row, column,deck,deckIndex)) {
+                        Location newLocation=new Location(row, column);
+                        locations.add(newLocation);
+                    }
+                }
+            }
+        }
+        return locations;
+    }
 
     //Add points to the player's model. Just pass the player model
     public void addPointsToPlayerAfterCheckIfLegal(Player player){

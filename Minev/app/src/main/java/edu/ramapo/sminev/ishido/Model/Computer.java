@@ -17,8 +17,26 @@ public class Computer extends Player{
         paths=new Vector<Path>();
     }
 
+   /* public Vector<Location> generateAvailableLocations(){
+        Vector<Location> locations=new Vector<>();
+        //Basically adds the newly extended paths of the old vector-1 to the new one.
+        for (int row = 0; row < board.getRows(); row++) {
+            for (int column = 0; column < board.getColumns(); column++) {
+                //Is the particular button clickable? If not then there is a tile
+                if (!board.getTileAt(row, column).getIsTile()) {
+                    //The checkIfLegal will update the player score and place a tile at that location
+                    //remove the current tile in deck and return true
+                    if (board.checkIfLegalMove(row, column, model, path.pathSize(), "")) {
+                        Location newLocation=new Location(row, column,board.getTempScoreAfterCheckIfLegal());
+                        locations.add(newLocation);
+                    }
+                }
+            }
+        }
+    }*/
+
     //The algorithm with which the computer will play.
-   /* public void MiniMax(int cutoff, GameModel model, Vector<Path> paths){
+    public void MiniMax(int cutoff, GameModel model){
 
         //Base case for the recursive algorithm, when we reached the leaf nodes.
         if(paths.get(0).pathSize()==cutoff){
@@ -32,6 +50,7 @@ public class Computer extends Player{
 
                 }
             }
+
 
         }
         //Else extend all the paths of the tree until we reach the leaf nodes.
@@ -96,7 +115,16 @@ public class Computer extends Player{
                     break;
             }
         //}
-    }*/
+    }
+
+    public int computeScore(int humanScore, int computerScore, Turn turn){
+        if(turn.getCurrentTurn().equals("Human")){
+            return humanScore-computerScore;
+        }
+        else{
+            return  computerScore-humanScore;
+        }
+    }
 
     //The algorithm with which the computer will play.
     public void MiniMaxWoRec(int cutoff, GameModel model){
