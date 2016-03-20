@@ -226,7 +226,7 @@ public class GameBoard {
     }
 
 
-    public Vector<Location> generateAvailableLocations(int deckIndex, Deck deck){
+    /*public Vector<Location> generateAvailableLocations(int deckIndex, Deck deck){
         Vector<Location> locations=new Vector<>();
         //Basically adds the newly extended paths of the old vector-1 to the new one.
         for (int row = 0; row < ROWS; row++) {
@@ -243,7 +243,7 @@ public class GameBoard {
             }
         }
         return locations;
-    }
+    }*/
 
     //Add points to the player's model. Just pass the player model
     public void addPointsToPlayerAfterCheckIfLegal(Player player){

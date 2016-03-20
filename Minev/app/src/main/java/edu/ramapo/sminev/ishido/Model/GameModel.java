@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Vector;
 
 /************************************************************
  * Name:  Stanislav Minev                                   *
@@ -175,6 +176,55 @@ public class GameModel {
             e.printStackTrace();
         }
 
+    }
+
+    public Vector<Location> generateAvailableLocationsWithoutScore(int deckIndex){
+        Vector<Location> locations=new Vector<>();
+        //Basically adds the newly extended paths of the old vector-1 to the new one.
+        for (int row = 0; row < board.getRows(); row++) {
+            for (int column = 0; column < board.getColumns(); column++) {
+                //Is the particular button clickable? If not then there is a tile
+                if (!board.getTileAt(row, column).getIsTile()) {
+                    //The checkIfLegal will update the player score and place a tile at that location
+                    //remove the current tile in deck and return true
+                    if (board.checkIfLegalMove(row, column,deck,deckIndex)) {
+                        Location newLocation=new Location(row, column);
+                        locations.add(newLocation);
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
+    public Vector<Location> generateAvailableLocationsWithScore(int deckIndex){
+        Vector<Location> locations=new Vector<>();
+        //Basically adds the newly extended paths of the old vector-1 to the new one.
+        for (int row = 0; row < board.getRows(); row++) {
+            for (int column = 0; column < board.getColumns(); column++) {
+                //Is the particular button clickable? If not then there is a tile
+                if (!board.getTileAt(row, column).getIsTile()) {
+                    //The checkIfLegal will update the player score and place a tile at that location
+                    //remove the current tile in deck and return true
+                    if (board.checkIfLegalMove(row, column,this,deckIndex,"")) {
+                        Location newLocation=new Location(row, column,board.getTempScoreAfterCheckIfLegal());
+                        locations.add(newLocation);
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
+
+    public void simulateMove(int deckIndex, Location location){
+        //So the next tile from the deck considers the legal moves for those tiles as well
+            board.setTileAt(location.getRow(), location.getColumn(), deck.getTileAt(deckIndex).getColor(), deck.getTileAt(deckIndex).getShape());
+
+    }
+
+    public void undoSimulation(Location location){
+        board.setTileAtToDefault(location.getRow(),location.getColumn());
     }
 
     //Updates a color/shape of a tile depending on the character

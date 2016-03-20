@@ -9,12 +9,13 @@ public class Computer extends Player{
 
     Vector<Path> paths;
     Path path;
-
+    int cutoff;
 
     public Computer(){
         super();
         //Initializing the vector with the initial node.
         paths=new Vector<Path>();
+        cutoff=0;
     }
 
    /* public Vector<Location> generateAvailableLocations(){
@@ -35,86 +36,95 @@ public class Computer extends Player{
         }
     }*/
 
-    //The algorithm with which the computer will play.
-    public void MiniMax(int cutoff, GameModel model){
+    public void setCutoff(int cutoff){
+        this.cutoff=cutoff;
+    }
 
-        //Base case for the recursive algorithm, when we reached the leaf nodes.
-        if(paths.get(0).pathSize()==cutoff){
-            Vector<Path> newPaths=new Vector<Path>();
-
-            while(paths.size()!=0) {
-                Path path = new Path();
-                path.changePathTo(paths.get(0));
-                path.removeLastLocation();
-                while (paths.get(0).pathSize()) {
-
+    public Location maximize(Vector<Location> locations){
+        if(locations.size()>=2) {
+            Location bestLoc = new Location(locations.get(0).getRow(),locations.get(0).getColumn(),locations.get(0).getScore());
+            for (int i = 1; i < locations.size(); i++) {
+                if(bestLoc.getScore()<locations.get(i).getScore()){
+                    bestLoc.setLocation(locations.get(i));
                 }
             }
-
-
+            return bestLoc;
         }
-        //Else extend all the paths of the tree until we reach the leaf nodes.
         else{
-            //A new vector to save the extended paths and then to be passed into the recursive function
-            Vector<Path> extendedPaths=new Vector<>();
+            return locations.get(0);
+        }
+    }
 
-            //Until we exhaust all the previous parents
-            while(paths.size()!=0) {
-                //Initializing a path helper object for each of the old paths and delete
-                //the old path until its empty
-                Path path = new Path();
-                path.changePathTo(paths.get(0));
-                paths.remove(0);
-
-                //Places the tiles on the board of the probable best solution
-                //So the next tile from the deck considers the legal moves for those tiles as well
-                for (int depth = 0; depth < path.pathSize(); depth++) {
-                    model.getBoard().setTileAt(path.getLocationAtLevel(depth).getRow(),
-                            path.getLocationAtLevel(depth).getColumn(), model.getDeck().getTileAt(depth).getColor(),
-                            model.getDeck().getTileAt(depth).getShape());
-                }
-
-                //Basically adds the newly extended paths of the old vector-1 to the new one.
-                for (int row = 0; row < model.getBoard().getRows(); row++) {
-                    for (int column = 0; column < model.getBoard().getColumns(); column++) {
-                        //Is the particular button clickable? If not then there is a tile
-                        if (!model.getBoard().getTileAt(row, column).getIsTile()) {
-                            //The checkIfLegal will update the player score and place a tile at that location
-                            //remove the current tile in deck and return true
-                            if (model.getBoard().checkIfLegalMove(row, column, model, paths.get(0).pathSize(), "")) {
-                                Path tempPath = new Path();
-                                tempPath.changePathTo(path);
-                                Location l = new Location(row, column,model.getBoard().getTempScoreAfterCheckIfLegal());
-                                //Adds a new location to this path
-                                tempPath.addLocationToPath(l);
-                                //And adds it in the paths vector
-                                extendedPaths.add(tempPath);
-                            }
-                        }
-                    }
-                }
-                //Revert the board to the original state
-                for (int depth = 0; depth < path.pathSize(); depth++) {
-                    model.getBoard().setTileAtToDefault(path.getLocationAtLevel(depth).getRow(),
-                            path.getLocationAtLevel(depth).getColumn());
+    public Location minimize(Vector<Location> locations){
+        if(locations.size()>=2) {
+            Location bestLoc = new Location(locations.get(0).getRow(), locations.get(0).getColumn(), -locations.get(0).getScore());
+            for (int i = 1; i < locations.size(); i++) {
+                if(bestLoc.getScore() < -locations.get(i).getScore()){
+                    bestLoc.setLocation(locations.get(i));
                 }
             }
-            MiniMax(cutoff,model,extendedPaths);
+            return bestLoc;
+        }
+        else{
+            return locations.get(0);
+        }
+    }
+
+
+
+    //The algorithm with which the computer will play.
+    public Vector<Location> MiniMax(int deckIndex, GameModel model) {
+
+        //Base case i.e when the leaf nodes are reached return the locations with the scores of the leaf nodes.
+        if(deckIndex+1==cutoff){
+            return model.generateAvailableLocationsWithScore(deckIndex);
+        }
+        //Continue expanding the tree
+        else{
+            Vector<Location> locations=model.generateAvailableLocationsWithoutScore(deckIndex);
+            Vector<Location> evaluatedLocations=new Vector<>();
+            //If its the computer's move
+            if(model.getTurn().getCurrentTurn().equals("Computer")) {
+                //Vector<Location> evaluatedLocations=new Vector<>();
+                //For every children
+                for(int i=0;i<locations.size();i++){
+                    //Simulate move by putting tile on the board
+                    model.simulateMove(deckIndex, locations.get(i));
+                    model.getTurn().setNextTurnHuman();
+                    Location location = new Location();
+                    location.setLocation(maximize(MiniMax(deckIndex++, model)));
+                    evaluatedLocations.add(location);
+                    //Return the state of the board
+                    model.undoSimulation(locations.get(i));
+                    model.getTurn().setNextTurnComputer();
+                }
+            }
+            //If it's the human's move
+            else{
+                //For every children
+                for(int i=0;i<locations.size();i++) {
+                    //Simulate move by putting tile on the board
+                    model.simulateMove(deckIndex, locations.get(i));
+                    //Set the next turn to the computer
+                    model.getTurn().setNextTurnComputer();
+                    Location location = new Location();
+                    location.setLocation(minimize(MiniMax(deckIndex++, model)));
+                    evaluatedLocations.add(location);
+                    //Return the state of the board
+                    model.undoSimulation(locations.get(i));
+                    //Undo the turn to human
+                    model.getTurn().setNextTurnHuman();
+                }
+            }
+            return evaluatedLocations;
         }
 
+        //If its a minimizers turn
 
-        Turn turn=new Turn();
-        turn.equals(model.turn);
-        //while(cutoff!=0) {
-            switch (turn.toString()) {
-                case "Human":
-                    minimize(model);
-                    break;
-                case "Computer":
-                    maximize(model);
-                    break;
-            }
-        //}
+        //If its the maximizers turn
+
+        //
+
     }
 
     public int computeScore(int humanScore, int computerScore, Turn turn){
@@ -127,7 +137,7 @@ public class Computer extends Player{
     }
 
     //The algorithm with which the computer will play.
-    public void MiniMaxWoRec(int cutoff, GameModel model){
+    /*public void MiniMaxWoRec(int cutoff, GameModel model){
 
         Path root=new Path();
         paths.add(root);
@@ -222,7 +232,7 @@ public class Computer extends Player{
         model.getDeck().removeCurrentFromDeck();
         model.getComputer().addPoints(bestPath.getLocationAtLevel(0).getScore());
         System.out.println("Total Score of the best path = "+bestPath.getTotalScore());
-    }
+    }*/
 
 
     public void getLeafNodes(){
