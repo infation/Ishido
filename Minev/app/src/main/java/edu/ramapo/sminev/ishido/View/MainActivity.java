@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.GameModel;
+import edu.ramapo.sminev.ishido.Model.Location;
 import edu.ramapo.sminev.ishido.Model.Turn;
 import edu.ramapo.sminev.ishido.R;
 
@@ -260,7 +261,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
-                        gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
+                        gameModel.getComputer().setCutoff(cutoffSpinner.getSelectedItemPosition() + 1);
+                        Vector<Location> locations=new Vector<Location>(gameModel.getComputer().MiniMax(0, gameModel));
+                        gameModel.getBoard().setBlinkableTileAt(locations.get(0).getRow(),locations.get(0).getColumn(),
+                                gameModel.getDeck().getCurrentTile().getColor(),gameModel.getDeck().getCurrentTile().getShape());
+                        gameModel.getDeck().removeCurrentFromDeck();
+                        //gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
                         for (int i = 0; i < MAX_ROWS; i++) {
                             for (int j = 0; j < MAX_COLUMNS; j++) {
                                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),

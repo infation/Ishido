@@ -19,18 +19,24 @@ public class Location {
     private Integer column;
     //The score of the location after being placed on the board
     private int score;
+    private int humanScore;
+    private int computerScore;
 
     //The default constructor
     Location(){
         row=null;
         column=null;
         score=0;
+        humanScore=0;
+        computerScore=0;
     }
 
     Location(int row, int column){
         this.row=row;
         this.column=column;
         score=0;
+        humanScore=0;
+        computerScore=0;
     }
 
     //Custom constructor to set a location
@@ -40,11 +46,20 @@ public class Location {
         score=s;
     }
 
+    Location(int i, int j, int hs, int cs){
+        row=i;
+        column=j;
+        humanScore=hs;
+        computerScore=cs;
+    }
+
     //The location is set to default
     public void setToDefaultLocation(){
         row=null;
         column=null;
         score=0;
+        humanScore=0;
+        computerScore=0;
     }
 
     //Getters for the row,column and score of the location
@@ -57,6 +72,14 @@ public class Location {
     public int getScore() {
         return score;
     }
+    public int getHumanScore(){
+        return humanScore;
+    }
+    public int getComputerScore(){
+        return computerScore;
+    }
+
+
 
     //Setters for the row, column and score
     public void setRow(Integer row) {
@@ -68,12 +91,31 @@ public class Location {
     public void setScore(int score) {
         this.score = score;
     }
+    public void setHumanScore(int humanScore) {
+        this.humanScore = humanScore;
+    }
+    public void setComputerScore(int computerScore) {
+        this.computerScore = computerScore;
+    }
 
     //Sets the location's row, column and score to a passed location's row,column, score
-    public void setLocation(Location l){
+    /*public void setLocation(Location l){
         setRow(l.getRow());
         setColumn(l.getColumn());
         setScore(l.getScore());
+
+    }*/
+
+    public void setLocationWithScores(Location l){
+        setRow(l.getRow());
+        setColumn(l.getColumn());
+        setHumanScore(l.getHumanScore());
+        setComputerScore(l.getComputerScore());
     }
 
+    public void setLocationWithHeuristicValue(Location l){
+        setRow(l.getRow());
+        setColumn(l.getColumn());
+        setScore(l.score);
+    }
 }
