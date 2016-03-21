@@ -61,7 +61,7 @@ public class Computer extends Player{
         if(locations.size()>=2) {
             Location bestLoc = new Location(locations.get(0).getRow(), locations.get(0).getColumn(), locations.get(0).getScore());
             for (int i = 1; i < locations.size(); i++) {
-                if(bestLoc.getScore() < locations.get(i).getScore()){
+                if(bestLoc.getScore() > locations.get(i).getScore()){
                     bestLoc.setLocationWithHeuristicValue(locations.get(i));
                 }
             }
@@ -79,24 +79,27 @@ public class Computer extends Player{
 
         //Base case i.e when the leaf nodes are reached return the locations with the scores of the leaf nodes.
         if(deckIndex==cutoff){
+            model.getTurn().switchTurn();
             Location evaluatedLocation=new Location();
             evaluatedLocation.setLocationWithScores(l);
             evaluatedLocation.setScore(computeScore(l.getHumanScore(), l.getComputerScore(),model.getTurn().getCurrentTurn()));
             //Needs to return the difference of the human score and the computer score.
+            model.getTurn().switchTurn();
             return evaluatedLocation;
         }
         //Continue expanding the tree
         else{
-            Vector<Location> evaluatedLocations=new Vector<>();
+            //Vector<Location> evaluatedLocations=new Vector<>();
 
             //If its the computer's move
             if(model.getTurn().getCurrentTurn().equals("Computer")) {
                 Vector<Location> locations=new Vector<>(model.generateAvailableLocationsWithScore(deckIndex,"Computer"));
-                for(int i=0;i<locations.size();i++){
+                /*for(int i=0;i<locations.size();i++){
                     System.out.println("An available location for tile "+(deckIndex+1)+" is: ["+ (locations.get(i).getRow()+1)+"]["+(locations.get(i).getColumn()+1)+"] " +
                             "and HumanScore - "+locations.get(i).getHumanScore()+" | and ComputerScore - "+locations.get(i).getComputerScore());
-                }
+                }*/
 
+                model.getTurn().setNextTurnHuman();
                 //Vector<Location> evaluatedLocations=new Vector<>();
                 //For every children
                 for(int i=0;i<locations.size();i++){
@@ -105,29 +108,26 @@ public class Computer extends Player{
                     int computerScore=model.getComputer().getScore();
                     model.simulateMove(deckIndex, locations.get(i));
                     //model.simulateScore(model.getTurn());
-                    model.getTurn().setNextTurnHuman();
-                    Location location = new Location();
-                    /*if(deckIndex+1==cutoff){
-                        this.locations=new Vector<>(locations);
-                    }*/
-                    location.setLocationWithHeuristicValue(MiniMax(deckIndex+1, model,locations.get(i)));
-                    evaluatedLocations.add(location);
+
+                    locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i)).getScore());
+                    //evaluatedLocations.add(location);
                     //Return the state of the board
-                    model.undoSimulation(locations.get(i), humanScore,computerScore);
-                    model.getTurn().setNextTurnComputer();
+                    model.undoSimulation(locations.get(i), humanScore, computerScore);
                 }
+            model.getTurn().setNextTurnComputer();
                 Location maximizedLocation=new Location();
-                maximizedLocation.setLocationWithHeuristicValue(maximize(evaluatedLocations));
-                System.out.println("Exiting from the miximizer: Heuristic value of the location: "+maximizedLocation.getScore());
+                maximizedLocation.setLocationWithHeuristicValue(maximize(locations));
+                System.out.println("Exiting from the maximizer: Heuristic value of the location: "+maximizedLocation.getScore());
                 return maximizedLocation;
             }
             //If it's the human's move
             else{
                 Vector<Location> locations=new Vector<>(model.generateAvailableLocationsWithScore(deckIndex,"Human"));
-                for(int i=0;i<locations.size();i++){
+                /*for(int i=0;i<locations.size();i++){
                     System.out.println("An available location for tile " + (deckIndex + 1) + " is: [" + (locations.get(i).getRow()+1) + "][" + (locations.get(i).getColumn()+1) + "] " +
                             "and HumanScore - " + locations.get(i).getHumanScore() + " | and ComputerScore - " + locations.get(i).getComputerScore());
-                }
+                }*/
+                model.getTurn().setNextTurnComputer();
                 //For every children
                 for(int i=0;i<locations.size();i++) {
                     //Simulate move by putting tile on the board
@@ -135,17 +135,18 @@ public class Computer extends Player{
                     int computerScore=model.getComputer().getScore();
                     model.simulateMove(deckIndex, locations.get(i));
                     //Set the next turn to the computer
-                    model.getTurn().setNextTurnComputer();
-                    Location location = new Location();
-                    location.setLocationWithHeuristicValue(MiniMax(deckIndex+1, model,locations.get(i)));
-                    evaluatedLocations.add(location);
+                    //model.getTurn().setNextTurnComputer();
+                    //Location location = new Location();
+                    locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i)).getScore());
+                    //evaluatedLocations.add(location);
                     //Return the state of the board
                     model.undoSimulation(locations.get(i),humanScore,computerScore);
                     //Undo the turn to human
-                    model.getTurn().setNextTurnHuman();
+                    //model.getTurn().setNextTurnHuman();
                 }
+                model.getTurn().setNextTurnHuman();
                 Location minimizedLocation=new Location();
-                minimizedLocation.setLocationWithHeuristicValue(minimize(evaluatedLocations));
+                minimizedLocation.setLocationWithHeuristicValue(minimize(locations));
                 System.out.println("Exiting from the minimizer: Heuristic value of the location: " + minimizedLocation.getScore());
                 return minimizedLocation;
             }
@@ -160,12 +161,12 @@ public class Computer extends Player{
     }
 
     public int computeScore(int humanScore, int computerScore, String turn){
-        if(turn.equals("Human")){
+        //if(turn.equals("Human")){
+         //   return humanScore-computerScore;
+        //}
+        //else{
             return computerScore-humanScore;
-        }
-        else{
-            return humanScore-computerScore;
-        }
+       // }
     }
 
     //The algorithm with which the computer will play.

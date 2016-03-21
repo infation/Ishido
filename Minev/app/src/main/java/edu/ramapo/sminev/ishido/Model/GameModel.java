@@ -227,11 +227,11 @@ public class GameModel {
                     //remove the current tile in deck and return true
                     if (board.checkIfLegalMove(row, column,this,deckIndex,"")) {
                         if(turn.equals("Human")){
-                            Location newLocation=new Location(row, column,board.getTempScoreAfterCheckIfLegal(),0);
+                            Location newLocation=new Location(row, column,human.getScore()+board.getTempScoreAfterCheckIfLegal(),computer.getScore());
                             locations.add(newLocation);
                         }
                         else{
-                            Location newLocation=new Location(row, column,0,board.getTempScoreAfterCheckIfLegal());
+                            Location newLocation=new Location(row, column,human.getScore(),computer.getScore()+board.getTempScoreAfterCheckIfLegal());
                             locations.add(newLocation);
                         }
 
@@ -246,8 +246,8 @@ public class GameModel {
     public void simulateMove(int deckIndex, Location location){
         //So the next tile from the deck considers the legal moves for those tiles as well
             board.setTileAt(location.getRow(), location.getColumn(), deck.getTileAt(deckIndex).getColor(), deck.getTileAt(deckIndex).getShape());
-            human.setScore(location.getHumanScore());
-            computer.setScore(location.getComputerScore());
+            human.setScore(human.getScore()+location.getHumanScore());
+            computer.setScore(computer.getScore()+location.getComputerScore());
     }
 
     public void undoSimulation(Location location, int humanScore, int computerScore){
