@@ -14,6 +14,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -58,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private Button computerScoreView;
     private Button nextButton;
     private Button saveGameButton;
-    private TextView timeStampBefore;
-    private TextView timeStampAfter;
+    private TextView timeStamp;
 
     //The view of the boardView
     private Button[][] boardView=new Button[MAX_ROWS][MAX_COLUMNS];
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     //Drawer for tiles
     private Vector<String> drawerListViewItems=new Vector<>();
     private ListView drawerListView;
+    private CheckBox alphaBeta;
     //private DrawerLayout drawer;
 
 
@@ -188,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
         nextButton=(Button)findViewById(R.id.next_button);
         saveGameButton=(Button)findViewById(R.id.save_game);
         turnView=(TextView)findViewById(R.id.turn_view);
-        timeStampBefore=(TextView)findViewById(R.id.time_stamp_before);
-        timeStampAfter=(TextView)findViewById(R.id.time_stamp_after);
+        timeStamp=(TextView)findViewById(R.id.time_stamp_after);
+        alphaBeta=(CheckBox)findViewById(R.id.alpha_beta);
 
         //Cutoff Spinner initialization
         cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
@@ -262,16 +263,16 @@ public class MainActivity extends AppCompatActivity {
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
                         Long timeB = System.currentTimeMillis();
 
-                        gameModel.getComputer().minimax(gameModel, cutoffSpinner.getSelectedItemPosition());
+                        gameModel.getComputer().minimax(gameModel, cutoffSpinner.getSelectedItemPosition(), alphaBeta.isChecked());
 
                         Long timeA=System.currentTimeMillis();
 
                         Long time= timeA-timeB;
-                        Integer seconds = (int) (time / 1000) % 60 ;
                         Integer minutes = (int) ((time / (1000*60)) % 60);
-                        Integer miliSecs= (int)(time - (minutes*1000*60+seconds*60));
+                        Integer seconds = (int) (time / 1000) % 60 ;
+                        Integer milliSecs= (int)(time - (minutes*1000*60+seconds*1000));
 
-                        timeStampAfter.setText("Took: "+ minutes+ " minutes, "+seconds+" seconds, "+miliSecs+" millisecs");
+                        timeStamp.setText("Took: "+ minutes+ " minutes, "+seconds+" seconds, "+milliSecs+" millisecs");
 
                         for (int i = 0; i < MAX_ROWS; i++) {
                             for (int j = 0; j < MAX_COLUMNS; j++) {

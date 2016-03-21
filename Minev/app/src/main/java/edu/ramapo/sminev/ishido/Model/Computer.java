@@ -53,16 +53,22 @@ public class Computer extends Player{
     }
 
 
-    public void minimax(GameModel model, int cutoff){
+    public void minimax(GameModel model, int cutoff,boolean alphaBeta){
         setCutoff(cutoff);
         Location root=new Location();
         //root.setComputerScore(model.getComputer().getScore());
         //root.setHumanScore(model.getHuman().getScore());
         int initialComputerScore=model.getComputer().getScore();
-        root.setLocation(MiniMaxAlgorithm(0, model, root, "Computer"));
-        System.out.println("ROOT: Heuristic value of the location[" + root.getRow() +
-                "][" + root.getColumn() + "] with scores: " + root.getHumanScore() + " | " + root.getComputerScore() + " | " + root.getHeuristicScore());
-        setScore(initialComputerScore+root.getComputerScore());
+
+        if(alphaBeta) {
+            root.setLocation(MiniMaxAlgorithm(0, model, root, "Computer"));
+        }
+        else{
+            root.setLocation(AlphaBetaPruning(0,model,root,"Computer"));
+        }
+
+        System.out.println("ROOT: Heuristic value of the location[" + root.getRow() + "][" + root.getColumn() + "] with scores: " + root.getHumanScore() + " | " + root.getComputerScore() + " | " + root.getHeuristicScore());
+        setScore(initialComputerScore + root.getComputerScore());
         model.getBoard().setBlinkableTileAt(root.getRow(), root.getColumn(),
                 model.getDeck().getCurrentTile().getColor(), model.getDeck().getCurrentTile().getShape());
         model.getDeck().removeCurrentFromDeck();
@@ -115,12 +121,75 @@ public class Computer extends Player{
         }
     }
 
+    //The heuristic function
     public int computeScore(int humanScore, int computerScore, String turn){
             return computerScore-humanScore;
     }
 
-    //Alpha bete prunning for MiniMax which will make the algorithm more efficient
-    public void AlphaBetaPrunning(){
 
+    //Alpha-beta Pruning for MiniMax which will make the algorithm more efficient
+    public Location AlphaBetaPruning(int deckIndex, GameModel model, Location parent, String turn){
+    //Generate locations
+        Vector<Location> generatedLocations=new Vector<>(model.generateAvailableLocations(deckIndex, turn, parent));
+        //Base case i.e when the leaf nodes are reached return the locations with the scores of the leaf nodes.
+        if(deckIndex==cutoff||generatedLocations.isEmpty()){
+            //Compute the heuristic value of the leaf node
+            parent.setHeuristicScore(computeScore(parent.getHumanScore(), parent.getComputerScore(), turn));
+            return parent;
+        }
+        else{
+            //If its the computer's move
+            if(turn.equals("Computer")) {
+                for (int i = 0; i < generatedLocations.size(); i++) {
+                    //Simulate move by putting tile on the board
+                    model.simulateMove(deckIndex, generatedLocations.get(i));
+                    generatedLocations.get(i).setHeuristicScore(MiniMaxAlgorithm(deckIndex + 1, model, generatedLocations.get(i), "Human").getHeuristicScore());
+                    if(parent.getHeuristicScore()>generatedLocations.get(i).getHeuristicScore()){
+                        //Return the state of the board
+                        model.undoSimulation(generatedLocations.get(i));
+                        Location maximizedLocation = new Location();
+                        maximizedLocation.setLocation(maximize(generatedLocations));
+                        return maximizedLocation;
+                    }
+                    else{
+                        //Return the state of the board
+                        model.undoSimulation(generatedLocations.get(i));
+                        parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
+                    }
+                }
+                Location maximizedLocation = new Location();
+                maximizedLocation.setLocation(maximize(generatedLocations));
+                System.out.println("Exiting from the maximizer: Heuristic value of the location["+maximizedLocation.getRow()+
+                        "]["+maximizedLocation.getColumn()+"] with score: "+maximizedLocation.getHumanScore()+" | "+maximizedLocation.getComputerScore()+" | " + maximizedLocation.getHeuristicScore());
+                return maximizedLocation;
+            }
+            //If it's the human's move
+            else{
+                //For every children
+                for(int i=0;i<generatedLocations.size();i++) {
+                    //Simulate move by putting tile on the board
+                    model.simulateMove(deckIndex, generatedLocations.get(i));
+                    //Set the next turn to the computer
+                    generatedLocations.get(i).setHeuristicScore(MiniMaxAlgorithm(deckIndex + 1, model, generatedLocations.get(i), "Computer").getHeuristicScore());
+                    if(parent.getHeuristicScore()<generatedLocations.get(i).getHeuristicScore()){
+                        //Return the state of the board
+                        model.undoSimulation(generatedLocations.get(i));
+                        Location minimizedLocation=new Location();
+                        minimizedLocation.setLocation(minimize(generatedLocations));
+                        return minimizedLocation;
+                    }
+                    else{
+                        //Return the state of the board
+                        model.undoSimulation(generatedLocations.get(i));
+                        parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
+                    }
+                }
+                Location minimizedLocation=new Location();
+                minimizedLocation.setLocation(minimize(generatedLocations));
+                System.out.println("Exiting from the minimizer: Heuristic value of the location["+minimizedLocation.getRow()+
+                        "]["+minimizedLocation.getColumn()+"] with score: "+minimizedLocation.getHumanScore()+" | "+minimizedLocation.getComputerScore()+ " | "+minimizedLocation.getHeuristicScore());
+                return minimizedLocation;
+            }
+        }
     }
 }

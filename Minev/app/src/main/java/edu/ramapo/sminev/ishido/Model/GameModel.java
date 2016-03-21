@@ -190,13 +190,14 @@ public class GameModel {
                     if (board.checkIfLegalMove(row, column,this,deckIndex,"")) {
                         if(turn.equals("Human")){
                             Location newLocation=new Location(row, column,parent.getHumanScore()+board.getTempScoreAfterCheckIfLegal(),parent.getComputerScore());
+                            newLocation.setHeuristicScore(Integer.MAX_VALUE);
                             locations.add(newLocation);
                         }
                         else{
                             Location newLocation=new Location(row, column, parent.getHumanScore(),parent.getComputerScore()+board.getTempScoreAfterCheckIfLegal());
+                            newLocation.setHeuristicScore(Integer.MIN_VALUE);
                             locations.add(newLocation);
                         }
-
                     }
                 }
             }
