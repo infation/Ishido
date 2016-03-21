@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.format.Time;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.security.Timestamp;
 import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.GameModel;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private Button computerScoreView;
     private Button nextButton;
     private Button saveGameButton;
+    private TextView timeStampBefore;
+    private TextView timeStampAfter;
 
     //The view of the boardView
     private Button[][] boardView=new Button[MAX_ROWS][MAX_COLUMNS];
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private Vector<String> drawerListViewItems=new Vector<>();
     private ListView drawerListView;
     //private DrawerLayout drawer;
+
 
 
     @Override
@@ -183,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         nextButton=(Button)findViewById(R.id.next_button);
         saveGameButton=(Button)findViewById(R.id.save_game);
         turnView=(TextView)findViewById(R.id.turn_view);
+        timeStampBefore=(TextView)findViewById(R.id.time_stamp_before);
+        timeStampAfter=(TextView)findViewById(R.id.time_stamp_after);
 
         //Cutoff Spinner initialization
         cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
@@ -193,10 +200,6 @@ public class MainActivity extends AppCompatActivity {
         //Just set the current turn to whoever won the toss and an empty board
         if(chosenOption.equals("1")){
             String turnStr=intent.getStringExtra("Turn");
-            if(turnStr.equals("Computer")){
-                setCutoffDropdownValues();
-                cutoffSpinner.setVisibility(View.VISIBLE);
-            }
             gameModel.getTurn().setNextTurn(turnStr);
             gameModel.getDeck().shuffleDeck();
         }
@@ -209,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
             gameModel.parseFromFile(file);
         }
 
+        setCutoffDropdownValues();
 
         //On click listeners for the boardView
         for (int i = 0; i < MAX_ROWS; i++) {
@@ -235,13 +239,8 @@ public class MainActivity extends AppCompatActivity {
         drawerListView = (ListView) findViewById(R.id.left_drawer);
         //drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
         // get list items from strings.xml
-        for(int i=0;i<gameModel.getDeck().size();i++){
-            drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
-        }
-        // Set the adapter for the list view
-        drawerListView.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_listview_item, drawerListViewItems));
 
+        setDrawer();
 
         saveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,19 +260,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
-                        gameModel.getComputer().setInitialScores(gameModel.getHuman().getScore(),gameModel.getComputer().getScore());
-                        gameModel.getComputer().setCutoff(cutoffSpinner.getSelectedItemPosition());
-                        Location l=new Location();
-                        l.setLocationWithScores(gameModel.getComputer().MiniMax(0, gameModel,l,"Computer"));
-                        //for(int i=0;i<locations.size();i++) {
-                          //  System.out.println("Final best location for tile " + (0) + " is: [" + (locations.get(i).getRow() + 1) + "][" + (locations.get(i).getColumn() + 1) + "] " +
-                          //          "and HumanScore - " + locations.get(i).getHumanScore() + " | and ComputerScore - " + locations.get(i).getComputerScore());
-                        //}
-                        gameModel.getBoard().checkIfLegalMove(l.getRow(),l.getColumn(),gameModel,0,"Computer");
-                            gameModel.getBoard().setBlinkableTileAt(l.getRow(),l.getColumn(),
-                                gameModel.getDeck().getCurrentTile().getColor(),gameModel.getDeck().getCurrentTile().getShape());
-                        gameModel.getDeck().removeCurrentFromDeck();
-                        //gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
+                        Long timeB = System.currentTimeMillis();
+
+                        gameModel.getComputer().minimax(gameModel, cutoffSpinner.getSelectedItemPosition());
+
+                        Long timeA=System.currentTimeMillis();
+
+                        Long time= timeA-timeB;
+                        Integer seconds = (int) (time / 1000) % 60 ;
+                        Integer minutes = (int) ((time / (1000*60)) % 60);
+                        Integer miliSecs= (int)(time - (minutes*1000*60+seconds*60));
+
+                        timeStampAfter.setText("Took: "+ minutes+ " minutes, "+seconds+" seconds, "+miliSecs+" millisecs");
+
                         for (int i = 0; i < MAX_ROWS; i++) {
                             for (int j = 0; j < MAX_COLUMNS; j++) {
                                 updateTileView(gameModel.getBoard().getTileAt(i, j).getColor(),
@@ -303,29 +302,35 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(endCredits);
                             finish();
                         }
+
                         updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                                 gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
                         computerScoreView.setText(gameModel.getComputer().getScore().toString());
-                        //System.out.println("Current turn to+" + gameModel.getTurn().getCurrentTurn());
                         gameModel.getTurn().switchTurn();
-                        //System.out.println("After the switch. +" + gameModel.getTurn().getCurrentTurn());
                         turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-                        /*//On click listeners for the boardView
-                        for (int i = 0; i < MAX_ROWS; i++) {
-                            for (int j = 0; j < MAX_COLUMNS; j++) {
-                                boardView[i][j].setEnabled(true);
-                            }
-                        }*/
+                        setDrawer();
                     } else {
                         Toast.makeText(MainActivity.this, "Please select a cutoff value.", Toast.LENGTH_SHORT).show();
                         cutoffSpinner.performClick();
                     }
+
                 }
                 else {
                     Toast.makeText(MainActivity.this, "You have the next turn !", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    public void setDrawer(){
+        //Drawer for tiles
+        drawerListViewItems=new Vector<>();
+        for(int i=1;i<gameModel.getDeck().size();i++){
+            drawerListViewItems.add(gameModel.getDeck().getTileAt(i).getColor()+" "+gameModel.getDeck().getTileAt(i).getShape());
+        }
+        // Set the adapter for the list view
+        drawerListView.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_listview_item, drawerListViewItems));
     }
 
 
@@ -375,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                                     drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
                                             R.layout.drawer_listview_item, drawerListViewItems));
 
-                                    cutoffSpinner.setVisibility(View.VISIBLE);
+                                    //cutoffSpinner.setVisibility(View.VISIBLE);
                                     setCutoffDropdownValues();
 
                                     //Check if the deck is empty, if not continue

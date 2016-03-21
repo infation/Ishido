@@ -1093,8 +1093,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginBottom="20dp"
-            android:visibility="invisible"/>
+            android:layout_marginBottom="20dp" />
 
         <Button
             android:id="@+id/next_button"
@@ -1220,7 +1219,32 @@
                 android:gravity="center"
                 android:textColor="#000000"
                 android:clickable="false" />
+
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/time_stamp_before"
+            android:background="#ffffff"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="19sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="60dp" />
+
+        <TextView
+            android:id="@+id/time_stamp_after"
+            android:background="#ffffff"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="19sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="60dp" />
+
     </LinearLayout>
 </LinearLayout>
 

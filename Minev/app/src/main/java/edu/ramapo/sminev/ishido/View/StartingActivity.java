@@ -68,7 +68,7 @@ public class StartingActivity extends AppCompatActivity {
 
         //Get the text file, depending on whichFile the user chose.
 
-        /*ArrayAdapter filePickerAdapter=new ArrayAdapter<String>(StartingActivity.this,android.R.layout.simple_spinner_item, getAllTextFiles());
+        /*ArrayAdapter filePickerAdapter=new ArrayAdapter<>(StartingActivity.this,android.R.layout.simple_spinner_item, getAllTextFiles());
         filePickerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filesSpinner.setAdapter(filePickerAdapter);
         filesSpinner.setBackgroundResource(R.drawable.button_border);*/
