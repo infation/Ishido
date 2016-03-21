@@ -261,9 +261,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
+                        gameModel.getComputer().setInitialScores(gameModel.getHuman().getScore(),gameModel.getComputer().getScore());
                         gameModel.getComputer().setCutoff(cutoffSpinner.getSelectedItemPosition());
                         Location l=new Location();
-                        l.setLocationWithScores(gameModel.getComputer().MiniMax(0, gameModel,l));
+                        l.setLocationWithScores(gameModel.getComputer().MiniMax(0, gameModel,l,"Computer"));
                         //for(int i=0;i<locations.size();i++) {
                           //  System.out.println("Final best location for tile " + (0) + " is: [" + (locations.get(i).getRow() + 1) + "][" + (locations.get(i).getColumn() + 1) + "] " +
                           //          "and HumanScore - " + locations.get(i).getHumanScore() + " | and ComputerScore - " + locations.get(i).getComputerScore());

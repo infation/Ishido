@@ -216,7 +216,7 @@ public class GameModel {
         return locations;
     }
 
-    public Vector<Location> generateAvailableLocationsWithScore(int deckIndex, String turn){
+    public Vector<Location> generateAvailableLocationsWithScore(int deckIndex, String turn, int initialHumanScore, int initialComputerScore){
         Vector<Location> locations=new Vector<>();
         //Basically adds the newly extended paths of the old vector-1 to the new one.
         for (int row = 0; row < board.getRows(); row++) {
@@ -227,11 +227,11 @@ public class GameModel {
                     //remove the current tile in deck and return true
                     if (board.checkIfLegalMove(row, column,this,deckIndex,"")) {
                         if(turn.equals("Human")){
-                            Location newLocation=new Location(row, column,human.getScore()+board.getTempScoreAfterCheckIfLegal(),computer.getScore());
+                            Location newLocation=new Location(row, column,board.getTempScoreAfterCheckIfLegal(),computer.getScore()-initialComputerScore);
                             locations.add(newLocation);
                         }
                         else{
-                            Location newLocation=new Location(row, column,human.getScore(),computer.getScore()+board.getTempScoreAfterCheckIfLegal());
+                            Location newLocation=new Location(row, column,human.getScore()-initialHumanScore,board.getTempScoreAfterCheckIfLegal());
                             locations.add(newLocation);
                         }
 
@@ -246,14 +246,18 @@ public class GameModel {
     public void simulateMove(int deckIndex, Location location){
         //So the next tile from the deck considers the legal moves for those tiles as well
             board.setTileAt(location.getRow(), location.getColumn(), deck.getTileAt(deckIndex).getColor(), deck.getTileAt(deckIndex).getShape());
-            human.setScore(human.getScore()+location.getHumanScore());
-            computer.setScore(computer.getScore()+location.getComputerScore());
+            human.addPoints(location.getHumanScore());
+            computer.addPoints(location.getComputerScore());
     }
 
     public void undoSimulation(Location location, int humanScore, int computerScore){
-            board.setTileAtToDefault(location.getRow(),location.getColumn());
+            board.setTileAtToDefault(location.getRow(), location.getColumn());
             human.setScore(humanScore);
             computer.setScore(computerScore);
+    }
+
+    public void undoSimulation(Location location){
+        board.setTileAtToDefault(location.getRow(), location.getColumn());
     }
 
     //Updates a color/shape of a tile depending on the character

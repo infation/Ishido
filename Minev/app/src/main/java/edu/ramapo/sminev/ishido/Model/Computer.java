@@ -10,6 +10,8 @@ public class Computer extends Player{
     Vector<Path> paths;
     Path path;
     int cutoff;
+    int initialComputerScore=0;
+    int initialHumanScore=0;
     //Vector<Location> locations;
 
     public Computer(){
@@ -72,62 +74,41 @@ public class Computer extends Player{
         }
     }
 
+    public void setInitialScores(int humanScore,int computerScore){
+        initialComputerScore=computerScore;
+        initialHumanScore=humanScore;
+    }
 
 
     //The algorithm with which the computer will play.
-    public Location MiniMax(int deckIndex, GameModel model, Location l) {
-
+    public Location MiniMax(int deckIndex, GameModel model, Location l, String turn) {
+        Vector<Location> locations=new Vector<>(model.generateAvailableLocationsWithScore(deckIndex,turn,initialHumanScore,initialComputerScore));
         //Base case i.e when the leaf nodes are reached return the locations with the scores of the leaf nodes.
-        if(deckIndex==cutoff){
-            model.getTurn().switchTurn();
-            Location evaluatedLocation=new Location();
-            evaluatedLocation.setLocationWithScores(l);
-            evaluatedLocation.setScore(computeScore(l.getHumanScore(), l.getComputerScore(),model.getTurn().getCurrentTurn()));
-            //Needs to return the difference of the human score and the computer score.
-            model.getTurn().switchTurn();
-            return evaluatedLocation;
+        if(deckIndex==cutoff||locations.isEmpty()){
+            //Compute the heuristic value of the leaf node
+            l.setScore(computeScore(l.getHumanScore(),l.getComputerScore(),turn));
+            return l;
         }
-        //Continue expanding the tree
         else{
-            //Vector<Location> evaluatedLocations=new Vector<>();
-
             //If its the computer's move
-            if(model.getTurn().getCurrentTurn().equals("Computer")) {
-                Vector<Location> locations=new Vector<>(model.generateAvailableLocationsWithScore(deckIndex,"Computer"));
-                /*for(int i=0;i<locations.size();i++){
-                    System.out.println("An available location for tile "+(deckIndex+1)+" is: ["+ (locations.get(i).getRow()+1)+"]["+(locations.get(i).getColumn()+1)+"] " +
-                            "and HumanScore - "+locations.get(i).getHumanScore()+" | and ComputerScore - "+locations.get(i).getComputerScore());
-                }*/
-
-                model.getTurn().setNextTurnHuman();
-                //Vector<Location> evaluatedLocations=new Vector<>();
-                //For every children
-                for(int i=0;i<locations.size();i++){
-                    //Simulate move by putting tile on the board
-                    int humanScore=model.getHuman().getScore();
-                    int computerScore=model.getComputer().getScore();
-                    model.simulateMove(deckIndex, locations.get(i));
-                    //model.simulateScore(model.getTurn());
-
-                    locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i)).getScore());
-                    //evaluatedLocations.add(location);
-                    //Return the state of the board
-                    model.undoSimulation(locations.get(i), humanScore, computerScore);
-                }
-            model.getTurn().setNextTurnComputer();
-                Location maximizedLocation=new Location();
-                maximizedLocation.setLocationWithHeuristicValue(maximize(locations));
-                System.out.println("Exiting from the maximizer: Heuristic value of the location: "+maximizedLocation.getScore());
-                return maximizedLocation;
+            if(turn.equals("Computer")) {
+                    for (int i = 0; i < locations.size(); i++) {
+                        //Simulate move by putting tile on the board
+                        int humanScore = model.getHuman().getScore();
+                        int computerScore = model.getComputer().getScore();
+                        model.simulateMove(deckIndex, locations.get(i));
+                        locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i), "Human").getScore());
+                        //Return the state of the board
+                        model.undoSimulation(locations.get(i), humanScore, computerScore);
+                    }
+                    Location maximizedLocation = new Location();
+                    maximizedLocation.setLocationWithHeuristicValue(maximize(locations));
+                    System.out.println("Exiting from the maximizer: Heuristic value of the location["+maximizedLocation.getRow()+
+                            "]["+maximizedLocation.getColumn()+"] with score: "+ maximizedLocation.getScore());
+                    return maximizedLocation;
             }
             //If it's the human's move
             else{
-                Vector<Location> locations=new Vector<>(model.generateAvailableLocationsWithScore(deckIndex,"Human"));
-                /*for(int i=0;i<locations.size();i++){
-                    System.out.println("An available location for tile " + (deckIndex + 1) + " is: [" + (locations.get(i).getRow()+1) + "][" + (locations.get(i).getColumn()+1) + "] " +
-                            "and HumanScore - " + locations.get(i).getHumanScore() + " | and ComputerScore - " + locations.get(i).getComputerScore());
-                }*/
-                model.getTurn().setNextTurnComputer();
                 //For every children
                 for(int i=0;i<locations.size();i++) {
                     //Simulate move by putting tile on the board
@@ -135,153 +116,21 @@ public class Computer extends Player{
                     int computerScore=model.getComputer().getScore();
                     model.simulateMove(deckIndex, locations.get(i));
                     //Set the next turn to the computer
-                    //model.getTurn().setNextTurnComputer();
-                    //Location location = new Location();
-                    locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i)).getScore());
-                    //evaluatedLocations.add(location);
+                    locations.get(i).setScore(MiniMax(deckIndex + 1, model, locations.get(i), "Computer").getScore());
                     //Return the state of the board
-                    model.undoSimulation(locations.get(i),humanScore,computerScore);
-                    //Undo the turn to human
-                    //model.getTurn().setNextTurnHuman();
+                    model.undoSimulation(locations.get(i), humanScore, computerScore);
                 }
-                model.getTurn().setNextTurnHuman();
                 Location minimizedLocation=new Location();
                 minimizedLocation.setLocationWithHeuristicValue(minimize(locations));
-                System.out.println("Exiting from the minimizer: Heuristic value of the location: " + minimizedLocation.getScore());
+                System.out.println("Exiting from the minimizer: Heuristic value of the location["+minimizedLocation.getRow()+
+                        "]["+minimizedLocation.getColumn()+"] with score: "+ minimizedLocation.getScore());
                 return minimizedLocation;
             }
         }
-
-        //If its a minimizers turn
-
-        //If its the maximizers turn
-
-        //
-
     }
 
     public int computeScore(int humanScore, int computerScore, String turn){
-        //if(turn.equals("Human")){
-         //   return humanScore-computerScore;
-        //}
-        //else{
             return computerScore-humanScore;
-       // }
-    }
-
-    //The algorithm with which the computer will play.
-    /*public void MiniMaxWoRec(int cutoff, GameModel model){
-
-        Path root=new Path();
-        paths.add(root);
-
-        Turn turn;
-        turn=model.turn;
-
-        while(paths.get(0).pathSize()!=cutoff){
-            //A new vector to save the extended paths and then to be passed into the recursive function
-            Vector<Path> extendedPaths=new Vector<>();
-
-            //Until we exhaust all the previous parents
-            while(paths.size()!=0) {
-                //Initializing a path helper object for each of the old paths and delete
-                //the old path until its empty
-                Path path = new Path();
-                path.changePathTo(paths.get(0));
-                paths.remove(0);
-
-                //Places the tiles on the board of the probable best solution
-                //So the next tile from the deck considers the legal moves for those tiles as well
-                for (int depth = 0; depth < path.pathSize(); depth++) {
-                    model.getBoard().setTileAt(path.getLocationAtLevel(depth).getRow(),
-                            path.getLocationAtLevel(depth).getColumn(), model.getDeck().getTileAt(depth).getColor(),
-                            model.getDeck().getTileAt(depth).getShape());
-                }
-
-                //Basically adds the newly extended paths of the old vector-1 to the new one.
-                for (int row = 0; row < model.getBoard().getRows(); row++) {
-                    for (int column = 0; column < model.getBoard().getColumns(); column++) {
-                        //Is the particular button clickable? If not then there is a tile
-                        if (!model.getBoard().getTileAt(row, column).getIsTile()) {
-                            //The checkIfLegal will update the player score and place a tile at that location
-                            //remove the current tile in deck and return true
-                            if (model.getBoard().checkIfLegalMove(row, column, model, path.pathSize(), "")) {
-                                Path tempPath = new Path();
-                                tempPath.changePathTo(path);
-
-                                //System.out.println("Total Score of the path = "+tempPath.getTotalScore());
-                                if(turn.getCurrentTurn().equals("Human")){
-                                    //Adds a new location to this path with negative value
-                                     //Integer minimizer=0
-                                    System.out.println("The minimizer scores : "+ -model.getBoard().getTempScoreAfterCheckIfLegal());
-                                    Location l = new Location(row, column,-model.getBoard().getTempScoreAfterCheckIfLegal());
-                                    tempPath.addLocationToPath(l);
-                                }
-                                else{
-                                    //Adds a new location to this path
-                                    Location l = new Location(row, column, model.getBoard().getTempScoreAfterCheckIfLegal());
-                                    tempPath.addLocationToPath(l);
-                                }
-
-                                //And adds it in the paths vector
-                                extendedPaths.add(tempPath);
-                            }
-                        }
-                    }
-                }
-                //Revert the board to the original state
-                for (int depth = 0; depth < path.pathSize(); depth++) {
-                    model.getBoard().setTileAtToDefault(path.getLocationAtLevel(depth).getRow(),
-                            path.getLocationAtLevel(depth).getColumn());
-                }
-            }
-
-            //Sticking back those paths in the initial vector for further extension
-            while(extendedPaths.size()!=0) {
-                    paths.add(extendedPaths.get(0));
-                    extendedPaths.remove(0);
-            }
-            System.out.println("The vector size after extending paths is: "+paths.size());
-            turn.switchTurn();
-        }
-
-        //Exiting the loops and all extended paths are saved in the vector with the max values
-        //Time to find the best one.
-        Path bestPath=new Path();
-        bestPath.changePathTo(paths.get(0));
-        for(int i=1;i<paths.size();i++){
-            if(bestPath.getTotalScore()<paths.get(i).getTotalScore()){
-                bestPath.changePathTo(paths.get(i));
-            }
-        }
-
-        paths.removeAllElements();
-
-        //Now set the board,deck,score to the best first location
-        model.getBoard().setBlinkableTileAt(bestPath.getLocationAtLevel(0).getRow(),
-                bestPath.getLocationAtLevel(0).getColumn(),
-                model.getDeck().getCurrentTile().getColor(),
-                model.getDeck().getCurrentTile().getShape());
-        model.getDeck().removeCurrentFromDeck();
-        model.getComputer().addPoints(bestPath.getLocationAtLevel(0).getScore());
-        System.out.println("Total Score of the best path = "+bestPath.getTotalScore());
-    }*/
-
-
-    public void getLeafNodes(){
-
-    }
-
-
-    //For whenever the user has turn, the computer will recalibrate to accordingly to the
-    //best turn the user can make
-    public void minimize(GameModel model){
-
-    }
-
-    //For whenever the computer has turn, it will try to maximize its move
-    public void maximize(GameModel model){
-
     }
 
     //Alpha bete prunning for MiniMax which will make the algorithm more efficient
