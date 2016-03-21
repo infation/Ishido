@@ -23,7 +23,7 @@ public class Location {
     private int computerScore;
 
     //The default constructor
-    Location(){
+    public Location(){
         row=null;
         column=null;
         score=0;
@@ -31,7 +31,7 @@ public class Location {
         computerScore=0;
     }
 
-    Location(int row, int column){
+    public Location(int row, int column){
         this.row=row;
         this.column=column;
         score=0;
@@ -40,13 +40,13 @@ public class Location {
     }
 
     //Custom constructor to set a location
-    Location(int i, int j, int s){
+    public Location(int i, int j, int s){
         row=i;
         column=j;
         score=s;
     }
 
-    Location(int i, int j, int hs, int cs){
+    public Location(int i, int j, int hs, int cs){
         row=i;
         column=j;
         humanScore=hs;

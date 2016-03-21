@@ -261,9 +261,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
-                        gameModel.getComputer().setCutoff(cutoffSpinner.getSelectedItemPosition() + 1);
-                        Vector<Location> locations=new Vector<Location>(gameModel.getComputer().MiniMax(0, gameModel));
-                        gameModel.getBoard().setBlinkableTileAt(locations.get(0).getRow(),locations.get(0).getColumn(),
+                        gameModel.getComputer().setCutoff(cutoffSpinner.getSelectedItemPosition());
+                        Location l=new Location();
+                        l.setLocationWithScores(gameModel.getComputer().MiniMax(0, gameModel,l));
+                        //for(int i=0;i<locations.size();i++) {
+                          //  System.out.println("Final best location for tile " + (0) + " is: [" + (locations.get(i).getRow() + 1) + "][" + (locations.get(i).getColumn() + 1) + "] " +
+                          //          "and HumanScore - " + locations.get(i).getHumanScore() + " | and ComputerScore - " + locations.get(i).getComputerScore());
+                        //}
+                        gameModel.getBoard().checkIfLegalMove(l.getRow(),l.getColumn(),gameModel,0,"Computer");
+                            gameModel.getBoard().setBlinkableTileAt(l.getRow(),l.getColumn(),
                                 gameModel.getDeck().getCurrentTile().getColor(),gameModel.getDeck().getCurrentTile().getShape());
                         gameModel.getDeck().removeCurrentFromDeck();
                         //gameModel.getComputer().MiniMaxWoRec(Integer.parseInt(cutoffSpinner.getSelectedItem().toString()), gameModel);
