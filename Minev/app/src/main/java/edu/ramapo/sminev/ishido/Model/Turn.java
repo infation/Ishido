@@ -20,10 +20,6 @@ public class Turn {
         turn="None";
     }
 
-    public Turn(String turn){
-        this.turn=turn;
-    }
-
     //Getter to check who has the current turn
     public String getCurrentTurn(){
         return turn;
@@ -40,15 +36,5 @@ public class Turn {
         else if (turn.equals("Computer")){
             turn="Human";
         }
-    }
-
-    //To set the next turn to the human
-    public void setNextTurnHuman(){
-        turn="Human";
-    }
-
-    //To set the next turn to the computer
-    public void setNextTurnComputer(){
-        turn="Computer";
     }
 }

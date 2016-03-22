@@ -71,7 +71,7 @@ public class GameBoard {
 
 
     //To check the top adjacent tile.
-    public boolean checkTopAdjacent(int row, int column, Deck deck, int deckIndex){
+    public boolean checkTopAdjacent(int row, int column, Tile tile){
         boolean top = false;
         //For top corner
         if (row - 1 < 0) {
@@ -83,8 +83,8 @@ public class GameBoard {
             //Check if there is a tile on the top?
             if (board[row - 1][column].getIsTile()) {
                 //If the color or the shape matches, then set top to true and add a point to the score
-                if (board[row - 1][column].getColor().equals(deck.getTileAt(deckIndex).getColor())
-                        || board[row - 1][column].getShape().equals(deck.getTileAt(deckIndex).getShape())) {
+                if (board[row - 1][column].getColor().equals(tile.getColor())
+                        || board[row - 1][column].getShape().equals(tile.getShape())) {
                     top = true;
                     scoreAfterCheckIfLegal++;
                     return top;
@@ -100,7 +100,7 @@ public class GameBoard {
     }
 
     //To check the left adjacent tile
-    public boolean checkLeftAdjacent(int row, int column, Deck deck, int deckIndex){
+    public boolean checkLeftAdjacent(int row, int column, Tile tile){
         boolean left = false;
         //For left corner
         if (column - 1 < 0) {
@@ -112,8 +112,8 @@ public class GameBoard {
             //Check if there is a tile on the left?
             if (board[row][column - 1].getIsTile()) {
                 //If the color or the shape matches, then set left to true and add a point to the score
-                if (board[row][column - 1].getColor().equals(deck.getTileAt(deckIndex).getColor())
-                        || board[row][column - 1].getShape().equals(deck.getTileAt(deckIndex).getShape())) {
+                if (board[row][column - 1].getColor().equals(tile.getColor())
+                        || board[row][column - 1].getShape().equals(tile.getShape())) {
                     left = true;
                     scoreAfterCheckIfLegal++;
                     return left;
@@ -129,7 +129,7 @@ public class GameBoard {
     }
 
     //To check the bottom adjacent tile
-    public boolean checkBottomAdjacent(int row, int column, Deck deck, int deckIndex) {
+    public boolean checkBottomAdjacent(int row, int column, Tile tile) {
         boolean bottom = false;
 
         //For bottom corner
@@ -142,8 +142,8 @@ public class GameBoard {
             //Check if there is a tile on the bottom?
             if (board[row + 1][column].getIsTile()) {
                 //If the color or the shape matches, then set bottom to true and add a point to the score
-                if (board[row + 1][column].getColor().equals(deck.getTileAt(deckIndex).getColor())
-                        || board[row + 1][column].getShape().equals(deck.getTileAt(deckIndex).getShape())) {
+                if (board[row + 1][column].getColor().equals(tile.getColor())
+                        || board[row + 1][column].getShape().equals(tile.getShape())) {
                     bottom = true;
                     scoreAfterCheckIfLegal++;
                     return bottom;
@@ -159,7 +159,7 @@ public class GameBoard {
     }
 
     //To check the right adjacent tile
-    public boolean checkRightAdjacent(int row, int column, Deck deck, int deckIndex) {
+    public boolean checkRightAdjacent(int row, int column, Tile tile) {
         boolean right = false;
 
         if (column + 1 == COLUMNS) {
@@ -171,8 +171,8 @@ public class GameBoard {
             //Check if there is a tile on the right?
             if (board[row][column + 1].getIsTile()) {
                 //If the color or the shape matches, then set right to true and add a point to the score
-                if (board[row][column + 1].getColor().equals(deck.getTileAt(deckIndex).getColor())
-                        || board[row][column + 1].getShape().equals(deck.getTileAt(deckIndex).getShape())) {
+                if (board[row][column + 1].getColor().equals(tile.getColor())
+                        || board[row][column + 1].getShape().equals(tile.getShape())) {
                     right = true;
                     scoreAfterCheckIfLegal++;
                     return right;
@@ -193,57 +193,18 @@ public class GameBoard {
     depending on the deck and updates the score if the caller wants to add points to the
     player.*/
 
-    public boolean checkIfLegalMove(int row, int column, GameModel model, int deckIndex, String player) {
 
-        //setting the temp score to 0 before checking for a legal move
+    public boolean checkIfLegalMove(int row, int column, Tile tile) {
+
         scoreAfterCheckIfLegal=0;
-
         //Check if all of the adjacent squares are okay for the next tile to be placed
-        if (checkTopAdjacent(row, column, model.getDeck(), deckIndex)
-                && checkBottomAdjacent(row, column, model.getDeck(), deckIndex)
-                && checkLeftAdjacent(row, column, model.getDeck(), deckIndex)
-                && checkRightAdjacent(row, column, model.getDeck(), deckIndex)) {
-            //If the caller wanted to update the player model...
-            if(player.equals("Human")){
-                addPointsToPlayerAfterCheckIfLegal(model.getHuman());
-            }
-            else if(player.equals("Computer")){
-                addPointsToPlayerAfterCheckIfLegal(model.getComputer());
-            }
+        if (checkTopAdjacent(row, column, tile)
+                && checkBottomAdjacent(row, column, tile)
+                && checkLeftAdjacent(row, column, tile)
+                && checkRightAdjacent(row, column, tile)) {
             return true;
         } else return false;
     }
-
-    public boolean checkIfLegalMove(int row, int column, Deck deck, int deckIndex) {
-
-        //Check if all of the adjacent squares are okay for the next tile to be placed
-        if (checkTopAdjacent(row, column, deck, deckIndex)
-                && checkBottomAdjacent(row, column, deck, deckIndex)
-                && checkLeftAdjacent(row, column, deck, deckIndex)
-                && checkRightAdjacent(row, column, deck, deckIndex)) {
-            return true;
-        } else return false;
-    }
-
-
-    /*public Vector<Location> generateAvailableLocations(int deckIndex, Deck deck){
-        Vector<Location> locations=new Vector<>();
-        //Basically adds the newly extended paths of the old vector-1 to the new one.
-        for (int row = 0; row < ROWS; row++) {
-            for (int column = 0; column < COLUMNS; column++) {
-                //Is the particular button clickable? If not then there is a tile
-                if (!getTileAt(row, column).getIsTile()) {
-                    //The checkIfLegal will update the player score and place a tile at that location
-                    //remove the current tile in deck and return true
-                    if (checkIfLegalMove(row, column,deck,deckIndex)) {
-                        Location newLocation=new Location(row, column);
-                        locations.add(newLocation);
-                    }
-                }
-            }
-        }
-        return locations;
-    }*/
 
     //Add points to the player's model. Just pass the player model
     public void addPointsToPlayerAfterCheckIfLegal(Player player){
@@ -255,5 +216,41 @@ public class GameBoard {
         return scoreAfterCheckIfLegal;
     }
 
+    public void simulateMove(Location location, Tile tile){
+        setTileAt(location.getRow(), location.getColumn(),
+                tile.getColor(), tile.getShape());
+    }
 
+    public void undoSimulation(Location location){
+        setTileAtToDefault(location.getRow(), location.getColumn());
+    }
+
+    public Vector<Location> generateAvailableLocations(Tile tile, String turn, Location parent){
+        Vector<Location> locations=new Vector<>();
+        //Basically adds the newly extended paths of the old vector-1 to the new one.
+        for (int row = 0; row < ROWS; row++) {
+            for (int column = 0; column < COLUMNS; column++) {
+                //Is the particular button clickable? If not then there is a tile
+                if (!getTileAt(row, column).getIsTile()) {
+                    //The checkIfLegal will update the player score and place a tile at that location
+                    //remove the current tile in deck and return true
+                    if (checkIfLegalMove(row, column,tile)) {
+                        if(turn.equals("Human")){
+                            Location newLocation=new Location(row, column,parent.getHumanScore()+getTempScoreAfterCheckIfLegal(),parent.getComputerScore());
+                            newLocation.setHeuristicScore(Integer.MAX_VALUE);
+                            //newLocation.setParentHeuristicScore(Integer.MIN_VALUE);
+                            locations.add(newLocation);
+                        }
+                        else{
+                            Location newLocation=new Location(row, column, parent.getHumanScore(),parent.getComputerScore()+getTempScoreAfterCheckIfLegal());
+                            newLocation.setHeuristicScore(Integer.MIN_VALUE);
+                            //newLocation.setParentHeuristicScore(Integer.MAX_VALUE);
+                            locations.add(newLocation);
+                        }
+                    }
+                }
+            }
+        }
+        return locations;
+    }
 }

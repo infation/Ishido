@@ -1,5 +1,7 @@
 package edu.ramapo.sminev.ishido.Model;
 
+import java.util.Vector;
+
 /************************************************************
  * Name:  Stanislav Minev                                   *
  * Project:  Project 2                                      *
@@ -21,29 +23,17 @@ public class Location {
     private int heuristicscore;
     private int humanScore;
     private int computerScore;
+    private Integer parentHeuristicScore;
+    private boolean isRoot=false;
 
     //The default constructor
     public Location(){
+        //parentHeuristicScore=null;
         row=null;
         column=null;
         heuristicscore=0;
         humanScore=0;
         computerScore=0;
-    }
-
-    public Location(int row, int column){
-        this.row=row;
-        this.column=column;
-        heuristicscore=0;
-        humanScore=0;
-        computerScore=0;
-    }
-
-    //Custom constructor to set a location
-    public Location(int i, int j, int s){
-        row=i;
-        column=j;
-        heuristicscore=s;
     }
 
     public Location(int i, int j, int hs, int cs){
@@ -53,13 +43,12 @@ public class Location {
         computerScore=cs;
     }
 
-    //The location is set to default
-    public void setToDefaultLocation(){
-        row=null;
-        column=null;
-        heuristicscore=0;
-        humanScore=0;
-        computerScore=0;
+    public boolean getIsRoot(){
+        return isRoot;
+    }
+
+    public void setIsRoot(boolean value){
+        isRoot=value;
     }
 
     //Getters for the row,column and score of the location
@@ -78,8 +67,7 @@ public class Location {
     public int getComputerScore(){
         return computerScore;
     }
-
-
+    public Integer getParentHeuristicScore(){return parentHeuristicScore;}
 
     //Setters for the row, column and score
     public void setRow(Integer row) {
@@ -97,14 +85,17 @@ public class Location {
     public void setComputerScore(int computerScore) {
         this.computerScore = computerScore;
     }
+    public void setParentHeuristicScore(Integer score){parentHeuristicScore=score;}
 
-    //Sets the location's row, column and score to a passed location's row,column, score
-    /*public void setLocation(Location l){
-        setRow(l.getRow());
-        setColumn(l.getColumn());
-        setScore(l.getScore());
-
-    }*/
+    public void initializeParentHerScore(String turn){
+        //parentHeuristicScore=null;
+        if(turn.equals("Human")){
+            parentHeuristicScore=Integer.MAX_VALUE;
+        }
+        else{
+            parentHeuristicScore=Integer.MIN_VALUE;
+        }
+    }
 
     public void setLocation(Location l){
         setRow(l.getRow());
@@ -114,16 +105,20 @@ public class Location {
         setHeuristicScore(l.getHeuristicScore());
     }
 
-    public void setLocationWithScores(Location l){
-        setRow(l.getRow());
-        setColumn(l.getColumn());
-        setHumanScore(l.getHumanScore());
-        setComputerScore(l.getComputerScore());
+    public Location minimize(Vector<Location> locations){
+        if(locations.size()>=2) {
+            Location bestLoc = new Location();
+            bestLoc.setLocation(locations.get(0));
+            for (int i = 1; i < locations.size(); i++) {
+                if(bestLoc.getHeuristicScore() > locations.get(i).getHeuristicScore()){
+                    bestLoc.setLocation(locations.get(i));
+                }
+            }
+            return bestLoc;
+        }
+        else{
+            return locations.get(0);
+        }
     }
 
-    public void setLocationWithHeuristicScore(Location l){
-        setRow(l.getRow());
-        setColumn(l.getColumn());
-        setHeuristicScore(l.getHeuristicScore());
-    }
 }

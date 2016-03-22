@@ -178,48 +178,6 @@ public class GameModel {
 
     }
 
-    public Vector<Location> generateAvailableLocations(int deckIndex, String turn, Location parent){
-        Vector<Location> locations=new Vector<>();
-        //Basically adds the newly extended paths of the old vector-1 to the new one.
-        for (int row = 0; row < board.getRows(); row++) {
-            for (int column = 0; column < board.getColumns(); column++) {
-                //Is the particular button clickable? If not then there is a tile
-                if (!board.getTileAt(row, column).getIsTile()) {
-                    //The checkIfLegal will update the player score and place a tile at that location
-                    //remove the current tile in deck and return true
-                    if (board.checkIfLegalMove(row, column,this,deckIndex,"")) {
-                        if(turn.equals("Human")){
-                            Location newLocation=new Location(row, column,parent.getHumanScore()+board.getTempScoreAfterCheckIfLegal(),parent.getComputerScore());
-                            newLocation.setHeuristicScore(Integer.MAX_VALUE);
-                            locations.add(newLocation);
-                        }
-                        else{
-                            Location newLocation=new Location(row, column, parent.getHumanScore(),parent.getComputerScore()+board.getTempScoreAfterCheckIfLegal());
-                            newLocation.setHeuristicScore(Integer.MIN_VALUE);
-                            locations.add(newLocation);
-                        }
-                    }
-                }
-            }
-        }
-        return locations;
-    }
-
-
-    public void simulateMove(int deckIndex, Location location){
-        //So the next tile from the deck considers the legal moves for those tiles as well
-            board.setTileAt(location.getRow(), location.getColumn(), deck.getTileAt(deckIndex).getColor(), deck.getTileAt(deckIndex).getShape());
-            //location.setHumanScore();
-            //human.addPoints(location.getHumanScore());
-            //computer.addPoints(location.getComputerScore());
-    }
-
-    public void undoSimulation(Location location){
-            board.setTileAtToDefault(location.getRow(), location.getColumn());
-            //human.setScore(humanScore);
-            //computer.setScore(computerScore);
-    }
-
     //Updates a color/shape of a tile depending on the character
     //in the text file
     public void updateFromFile(Tile t, char c, char s){

@@ -262,8 +262,8 @@ public class MainActivity extends AppCompatActivity {
                 if (gameModel.getTurn().getCurrentTurn().equals("Computer")){
                     if (cutoffSpinner.getSelectedItemPosition() != 0) {
                         Long timeB = System.currentTimeMillis();
-
                         gameModel.getComputer().minimax(gameModel, cutoffSpinner.getSelectedItemPosition(), alphaBeta.isChecked());
+
 
                         Long timeA=System.currentTimeMillis();
 
@@ -358,21 +358,20 @@ public class MainActivity extends AppCompatActivity {
                             //If there isn't a tile on the board
                             if (!gameModel.getBoard().getTileAt(i, j).getIsTile()) {
                                 //Check if it's a legal move
-                                if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel, 0, "Human")) {
+                                if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel.getDeck().getCurrentTile())) {
+                                    gameModel.getBoard().addPointsToPlayerAfterCheckIfLegal(gameModel.getHuman());
+                                    //Set the tile in the board model
+                                    gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                            gameModel.getDeck().getCurrentTile().getShape());
                                     //Update the view's background...
                                     updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                                             gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
-                                    boardView[i][j].setClickable(false);
-                                    //Set the tile in the model
-                                    gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
-                                            gameModel.getDeck().getCurrentTile().getShape());
                                     //Remove it from the deck
                                     gameModel.getDeck().removeCurrentFromDeck();
                                     updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
                                             gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
                                     //Update the score view
                                     humanscoreView.setText(gameModel.getHuman().getScore().toString());
-
                                     gameModel.getTurn().switchTurn();
                                     turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
                                     // get list items from strings.xml
