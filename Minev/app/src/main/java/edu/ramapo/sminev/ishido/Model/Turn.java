@@ -25,10 +25,12 @@ public class Turn {
         return turn;
     }
 
+    //To set the next turn
     public void setNextTurn(String turn){
         this.turn=turn;
     }
 
+    //To switch the turn.
     public void switchTurn(){
         if(turn.equals("Human")){
             turn="Computer";

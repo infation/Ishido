@@ -32,12 +32,11 @@ which translates the characters into strings.
 public class GameModel {
 
     //Private objects
-    Turn turn;
-    Human human;
-    Computer computer;
-    Deck deck;
-    GameBoard board;
-   // AISearches ai;
+    private Turn turn;
+    private Human human;
+    private Computer computer;
+    private Deck deck;
+    private GameBoard board;
 
     public GameModel(){
         human=new Human();
@@ -47,20 +46,16 @@ public class GameModel {
         turn=new Turn();
     }
 
-
     //Getter for the different models
     public Human getHuman(){
         return human;
     }
-
     public Computer getComputer(){
         return computer;
     }
-
     public Turn getTurn(){
         return turn;
     }
-
     public Deck getDeck() {
         return deck;
     }
@@ -222,6 +217,7 @@ public class GameModel {
         }
     }
 
+    //To parse the strings as chars from 0-6
     public void parseInFile(Tile t, BufferedWriter wr){
         try {
             switch (t.getColor()) {
@@ -276,6 +272,7 @@ public class GameModel {
         }
     }
 
+    //To save the game into a text file.
     public void saveGame() throws IOException {
         String fileName="SavedGame.txt";
         String filePath=Environment.getExternalStorageDirectory().toString();

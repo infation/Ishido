@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private Vector<String> drawerListViewItems=new Vector<>();
     private ListView drawerListView;
     private CheckBox alphaBeta;
+    private String chosenOption;
     //private DrawerLayout drawer;
 
 
@@ -201,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
 
         //String whichFile = intent.getStringExtra(Intent.EXTRA_TEXT);
-        String chosenOption=intent.getStringExtra("ChosenOption");
+        chosenOption=intent.getStringExtra("ChosenOption");
         //The chosen option from the starting activity
         //Just set the current turn to whoever won the toss and an empty board
         if(chosenOption.equals("1")){
@@ -212,9 +213,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //Parse it if resume game
         else{
-            for(int i=0;i<gameModel.getDeck().size();i++){
-                gameModel.getDeck().removeCurrentFromDeck();
-            }
             String file=intent.getStringExtra("File");
             gameModel.parseFromFile(file);
         }
@@ -460,29 +458,13 @@ public class MainActivity extends AppCompatActivity {
                                                 gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
                                         //Remove it from the deck
                                         gameModel.getDeck().removeCurrentFromDeck();
-                                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
-                                        //Update the score view
-                                        humanscoreView.setText(gameModel.getHuman().getScore().toString());
-                                        gameModel.getTurn().switchTurn();
-                                        turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-                                        // get list items from strings.xml
-                                        drawerListViewItems.remove(0);
-                                        // Set the adapter for the list view
-                                        drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
-                                                R.layout.drawer_listview_item, drawerListViewItems));
-
-                                        //cutoffSpinner.setVisibility(View.VISIBLE);
-                                        //setCutoffDropdownValues();
-
-                                        //Check if the deck is empty, if not continue
                                         if (gameModel.getDeck().size() == 0) {
                                             if (gameModel.getHuman().getScore() > gameModel.getComputer().getScore()) {
                                                 //Going to the end credits activity
                                                 Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
                                                 String message = "Congratulations YOU WON!\n" +
                                                         "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                        "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                        "The computer scored " + gameModel.getComputer().getScore().toString() + " points.\n" +
                                                         "Thank you for playing Ishido.\n" +
                                                         "By Stanislav Minev";
                                                 endCredits.putExtra(Intent.EXTRA_TEXT, message);
@@ -492,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
                                                 String message = "YOU LOST!\n" +
                                                         "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                        "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                        "The computer scored " + gameModel.getComputer().getScore().toString() + " points.\n" +
                                                         "Thank you for playing Ishido.\n" +
                                                         "By Stanislav Minev";
                                                 endCredits.putExtra(Intent.EXTRA_TEXT, message);
@@ -500,6 +482,24 @@ public class MainActivity extends AppCompatActivity {
                                                 finish();
                                             }
                                         }
+                                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                                        //Update the score view
+                                        humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                                        gameModel.getTurn().switchTurn();
+                                        turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                                        // get list items from strings.xml
+                                        if(gameModel.getDeck().size()!=0) {
+                                            drawerListViewItems.remove(0);
+                                            // Set the adapter for the list view
+                                            drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                                    R.layout.drawer_listview_item, drawerListViewItems));
+                                        }
+                                        //cutoffSpinner.setVisibility(View.VISIBLE);
+                                        //setCutoffDropdownValues();
+
+                                        //Check if the deck is empty, if not continue
+
                                     }
                                 }
                                 else{

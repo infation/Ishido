@@ -9,7 +9,6 @@ package edu.ramapo.sminev.ishido.Model;
 
 public class Human extends Player {
 
-
     //Constructor which takes a deck and adds the tiles to the human deck.
     public Human(){
         super();

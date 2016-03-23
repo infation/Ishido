@@ -2,11 +2,19 @@ package edu.ramapo.sminev.ishido.Model;
 
 import java.util.Vector;
 
-/**
- * Created by slavf on 2/27/16.
- */
+/************************************************************
+ * Name:  Stanislav Minev                                   *
+ * Project:  Project 3                                      *
+ * Class:  CMPS 331 Artificial Intelligence I               *
+ * Date:  02/28/2015                                        *
+ ************************************************************/
+
+/* The class with which is represented. It contains a minimax algorithm
+   and alpha-beta pruning for minimax
+   and a hint for the human*/
 public class Computer extends Player{
 
+    //Cutoff set from the user
     int cutoff;
 
     public Computer(){
@@ -15,11 +23,12 @@ public class Computer extends Player{
         cutoff=0;
     }
 
-
+    //To set the cutoff
     public void setCutoff(int cutoff){
         this.cutoff=cutoff;
     }
 
+    //The maximize function to pick the best value for the maximizer
     public Location maximize(Vector<Location> locations){
         if(locations.size()>=2) {
             Location bestLoc = new Location();
@@ -36,6 +45,7 @@ public class Computer extends Player{
         }
     }
 
+    //The minimize function to pick the best value for the minimizer
     public Location minimize(Vector<Location> locations){
         if(locations.size()>=2) {
             Location bestLoc = new Location();
@@ -52,6 +62,7 @@ public class Computer extends Player{
         }
     }
 
+    //A hint for the user.
     public Location hint(GameModel model,int cutoff, boolean alphaBeta){
         setCutoff(cutoff);
         Location root=new Location();
@@ -64,12 +75,9 @@ public class Computer extends Player{
             root.setLocation(MiniMaxAlgorithm(0, model.getBoard(), model.getDeck(), root, "Computer"));
         }
         return root;
-        //model.getHuman().addPoints(root.getComputerScore());
-        /*model.getBoard().setBlinkableTileAt(root.getRow(), root.getColumn(),
-                model.getDeck().getCurrentTile().getColor(), model.getDeck().getCurrentTile().getShape());*/
-        //model.getDeck().removeCurrentFromDeck();
     }
 
+    //A wrapper function for whenever its a computer move
     public void minimax(GameModel model, int cutoff,boolean alphaBeta){
         setCutoff(cutoff);
         Location root=new Location();
@@ -142,129 +150,92 @@ public class Computer extends Player{
             return computerScore-humanScore;
     }
 
-    public boolean furtherPruning(Location parent, Location child, String currentTurn){
-        if(currentTurn.equals("Human")){
-            if(parent.getParentHeuristicScore()>parent.getHeuristicScore()){
-                return true;
-            }
-
-            if(parent.getParentHeuristicScore()==null){
-                parent.setParentHeuristicScore(parent.getHeuristicScore());
-                return false;
-            }
-            return true;
-        }
-        else{
-            if(parent.getParentHeuristicScore()<parent.getHeuristicScore()) {
-                return true;
-            }
-
-            if(parent.getParentHeuristicScore()==null){
-                parent.setParentHeuristicScore(parent.getHeuristicScore());
-                return false;
-            }
-            return true;
-        }
-    }
-
-    //Alpha-beta Pruning for MiniMax which will make the algorithm more efficient
+    //Alpha-beta Pruning
     public Location AlphaBetaPruning(int deckIndex, GameBoard board,Deck deck, Location parent, String turn){
-        //Base case i.e when the leaf nodes are reached return the locations with the scores of the leaf nodes.
+
+        //Base case i.e when the leaf nodes are reached return the heuristic value
         if(deckIndex==cutoff){
             //Compute the heuristic value of the leaf node
             parent.setHeuristicScore(computeScore(parent.getHumanScore(), parent.getComputerScore()));
             return parent;
         }
         else{
-            //If its the computer's move
+            //MAXIMIZER
             if(turn.equals("Computer")) {
                 //Generate locations
                 Vector<Location> generatedLocations=new Vector<>(board.generateAvailableLocations(deck.getTileAt(deckIndex), turn, parent));
-                //Set grandparents heuristics
-                for(int i=0;i<generatedLocations.size();i++){
-                    generatedLocations.get(i).setParentHeuristicScore(parent.getHeuristicScore());
-                }
                 for (int i = 0; i < generatedLocations.size(); i++) {
                     //Simulate move by putting tile on the board
                     board.simulateMove(generatedLocations.get(i), deck.getTileAt(deckIndex));
+                    //Recursively go to the next level
                     generatedLocations.get(i).setHeuristicScore(AlphaBetaPruning(deckIndex + 1, board, deck, generatedLocations.get(i), "Human").getHeuristicScore());
+                    //Undo the simulataion
                     board.undoSimulation(generatedLocations.get(i));
-                    //Setting the parent heuristic if its less than the current heuristic because its maximizer
+
+                    //Setting the parent heuristic in all the next generated locations if the current
+                    // node has a better heuristic
                     if(generatedLocations.get(i).getParentHeuristicScore()<generatedLocations.get(i).getHeuristicScore()){
                         for(int j=i;j<generatedLocations.size();j++){
                             generatedLocations.get(j).setParentHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                         }
-                        //parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                     }
-                    //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
-                      //      + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
-                    //If the grandparent heuristics and the parent heuristics don't match then prune the other children
+
+                    //If the grandparent heuristics and the parent heuristics aren't in the same
+                    // range then prune the other generated locations and return the heuristic value to the parent
                     if(!parent.getIsRoot()){
-                            if(parent.getParentHeuristicScore()!=Integer.MAX_VALUE&&
-                            parent.getParentHeuristicScore()<generatedLocations.get(i).getHeuristicScore()) {
-                                //parent.setParentHeuristicScore(parent.getHeuristicScore());
-                                //Return the state of the board
-                                Location maximizedLocation = new Location();
-                                maximizedLocation.setHeuristicScore(generatedLocations.get(i).getParentHeuristicScore());
-                                /*for (int j = i + 1; j < generatedLocations.size(); j++) {
-                                    System.out.println("Pruning minimizer location[" + generatedLocations.get(j).getRow() +
-                                            "][" + generatedLocations.get(j).getColumn() + "] with score: " +
-                                            generatedLocations.get(j).getHumanScore() + " | " + generatedLocations.get(j).getComputerScore());
-                                }*/
-                                //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore() + "/" + generatedLocations.get(i).getHeuristicScore());
-                                return maximizedLocation;
-                            }
+                        if(parent.getParentHeuristicScore()!=Integer.MAX_VALUE&&
+                        parent.getParentHeuristicScore()<generatedLocations.get(i).getHeuristicScore()) {
+                            Location maximizedLocation = new Location();
+                            maximizedLocation.setHeuristicScore(generatedLocations.get(i).getParentHeuristicScore());
+                            return maximizedLocation;
+                        }
                     }
                 }
                 Location maximizedLocation = new Location();
-                maximizedLocation.setLocation(maximize(generatedLocations));
+                //If the parent is a root and all the children are evaluated then pass the row/column to the root
+                if(parent.getIsRoot()) {
+                    maximizedLocation.setLocation(maximize(generatedLocations));
+                }
+                //Else just pass the heuristic score to the parent
+                else{
+                    maximizedLocation.setHeuristicScore(generatedLocations.get(generatedLocations.size() - 1).getParentHeuristicScore());
+                }
                 return maximizedLocation;
             }
-            //Only because one of the children fails the condition that doesnt mean I have to prune the other children
-            //If it's the human's move
+            //MINIMIZER
             else{
                 //Generate locations
                 Vector<Location> generatedLocations=new Vector<>(board.generateAvailableLocations(deck.getTileAt(deckIndex), turn, parent));
-                //Set grandparents heuristics
-                for(int i=0;i<generatedLocations.size();i++){
-                    generatedLocations.get(i).setParentHeuristicScore(parent.getHeuristicScore());
-                }
-                //For every children
                 for(int i=0;i<generatedLocations.size();i++) {
                     //Simulate move by putting tile on the board
                     board.simulateMove(generatedLocations.get(i), deck.getTileAt(deckIndex));
-                    //Set the next turn to the computer
+                    //Recursively go to the next level
                     generatedLocations.get(i).setHeuristicScore(AlphaBetaPruning(deckIndex + 1, board, deck, generatedLocations.get(i), "Computer").getHeuristicScore());
+                    //Undo simulation
                     board.undoSimulation(generatedLocations.get(i));
-                    //Setting the parent heuristic if its less than the current heuristic because its maximizer
-                    if(generatedLocations.get(i).getParentHeuristicScore()>generatedLocations.get(i).getHeuristicScore()){
-                        for(int j=i;j<generatedLocations.size();j++){
+
+                    //Setting the parent heuristic in all the next generated locations if the current
+                    // node has a better heuristic
+                    if (generatedLocations.get(i).getParentHeuristicScore() > generatedLocations.get(i).getHeuristicScore()) {
+                        for (int j = i; j < generatedLocations.size(); j++) {
                             generatedLocations.get(j).setParentHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                         }
-                        //parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                     }
 
-                    //If the grandparent heuristics and the parent heuristics don't match then prune the other children
-                    if((!parent.getIsRoot())&&parent.getParentHeuristicScore()!=Integer.MIN_VALUE
-                            &&parent.getParentHeuristicScore()>generatedLocations.get(i).getHeuristicScore()) {
-                        //parent.setParentHeuristicScore(parent.getHeuristicScore());
-                        //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
-                         //       + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
-                        //Return the state of the board
-                        Location maximizedLocation = new Location();
-                        maximizedLocation.setHeuristicScore(generatedLocations.get(i).getParentHeuristicScore());
-                        /*for(int j=i+1;j<generatedLocations.size();j++){
-                            System.out.println("Pruning maximizer location[" + generatedLocations.get(j).getRow() +
-                                    "][" + generatedLocations.get(j).getColumn() + "] with score: " +
-                                    generatedLocations.get(j).getHumanScore() + " | " + generatedLocations.get(j).getComputerScore());
-                        }*/
-                        return maximizedLocation;
+                    //If the grandparent heuristics and the parent heuristics aren't in the same
+                    // range then prune the other generated locations and return the heuristic value to the parent
+                    if (!parent.getIsRoot()) {
+                        if (parent.getParentHeuristicScore() != Integer.MIN_VALUE
+                                && parent.getParentHeuristicScore() > generatedLocations.get(i).getHeuristicScore()) {
+                            Location maximizedLocation = new Location();
+                            maximizedLocation.setHeuristicScore(generatedLocations.get(i).getParentHeuristicScore());
+                            return maximizedLocation;
+                        }
                     }
                 }
+                //Just pass the heuristic score to the parent
                 Location minimizedLocation=new Location();
-                minimizedLocation.setLocation(minimize(generatedLocations));
-                //System.out.println("Exiting from the minimizer: Heuristic value of the location[" + minimizedLocation.getRow() +
-                //        "][" + minimizedLocation.getColumn() + "] with score: " + minimizedLocation.getHumanScore() + " | " + minimizedLocation.getComputerScore()+ " | "+minimizedLocation.getHeuristicScore());
+                minimizedLocation.setHeuristicScore(generatedLocations.get(generatedLocations.size()-1).getParentHeuristicScore());
                 return minimizedLocation;
             }
         }

@@ -28,6 +28,7 @@ public class Deck {
 
     }
 
+    //To initialize the deck with all the tiles in the game
     public void initializeDeck(){
         deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "*"));
@@ -103,6 +104,7 @@ public class Deck {
         deck.add(new Tile("Green", "+"));
     }
 
+    //To shuffle the tiles in the deck
     public void shuffleDeck(){
         for(int i=0;i<10000;i++){
             Random rand=new Random();

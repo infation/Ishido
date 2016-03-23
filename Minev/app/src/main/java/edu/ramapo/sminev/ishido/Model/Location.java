@@ -19,16 +19,20 @@ public class Location {
     private Integer row;
     //The column of the location on the board
     private Integer column;
-    //The score of the location after being placed on the board
+    //The heuristic score
     private int heuristicscore;
+    //The player's scores
     private int humanScore;
     private int computerScore;
+    //To represent the parent heuristic value of that location
     private Integer parentHeuristicScore;
-    private boolean isRoot=false;
+    //A bool which represents if that node is a root. Set to false by default.
+    private boolean isRoot;
 
     //The default constructor
     public Location(){
         //parentHeuristicScore=null;
+        isRoot=false;
         row=null;
         column=null;
         heuristicscore=0;
@@ -41,17 +45,13 @@ public class Location {
         column=j;
         humanScore=hs;
         computerScore=cs;
-    }
-
-    public boolean getIsRoot(){
-        return isRoot;
-    }
-
-    public void setIsRoot(boolean value){
-        isRoot=value;
+        isRoot=false;
     }
 
     //Getters for the row,column and score of the location
+    public boolean getIsRoot(){
+        return isRoot;
+    }
     public Integer getRow() {
         return row;
     }
@@ -70,6 +70,9 @@ public class Location {
     public Integer getParentHeuristicScore(){return parentHeuristicScore;}
 
     //Setters for the row, column and score
+    public void setIsRoot(boolean value){
+        isRoot=value;
+    }
     public void setRow(Integer row) {
         this.row = row;
     }
@@ -86,17 +89,7 @@ public class Location {
         this.computerScore = computerScore;
     }
     public void setParentHeuristicScore(Integer score){parentHeuristicScore=score;}
-
-    public void initializeParentHerScore(String turn){
-        //parentHeuristicScore=null;
-        if(turn.equals("Human")){
-            parentHeuristicScore=Integer.MAX_VALUE;
-        }
-        else{
-            parentHeuristicScore=Integer.MIN_VALUE;
-        }
-    }
-
+    //To a location to another location (without its parent heuristic score)
     public void setLocation(Location l){
         setRow(l.getRow());
         setColumn(l.getColumn());
@@ -104,21 +97,4 @@ public class Location {
         setComputerScore(l.getComputerScore());
         setHeuristicScore(l.getHeuristicScore());
     }
-
-    public Location minimize(Vector<Location> locations){
-        if(locations.size()>=2) {
-            Location bestLoc = new Location();
-            bestLoc.setLocation(locations.get(0));
-            for (int i = 1; i < locations.size(); i++) {
-                if(bestLoc.getHeuristicScore() > locations.get(i).getHeuristicScore()){
-                    bestLoc.setLocation(locations.get(i));
-                }
-            }
-            return bestLoc;
-        }
-        else{
-            return locations.get(0);
-        }
-    }
-
 }

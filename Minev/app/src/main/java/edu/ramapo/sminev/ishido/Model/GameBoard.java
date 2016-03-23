@@ -69,7 +69,6 @@ public class GameBoard {
         board[row][column].setTile(c,s,true, true);
     }
 
-
     //To check the top adjacent tile.
     public boolean checkTopAdjacent(int row, int column, Tile tile){
         boolean top = false;
@@ -189,11 +188,7 @@ public class GameBoard {
 
     /*To check if the tile can be placed on a particular square
     Has to pass the indexes of the square that's being checked.
-    It has to pass the whole model, the deckIndex, since it's checking for a move
-    depending on the deck and updates the score if the caller wants to add points to the
-    player.*/
-
-
+    It has to pass a tile from the deck.*/
     public boolean checkIfLegalMove(int row, int column, Tile tile) {
 
         scoreAfterCheckIfLegal=0;
@@ -216,15 +211,18 @@ public class GameBoard {
         return scoreAfterCheckIfLegal;
     }
 
+    //To simulate a move
     public void simulateMove(Location location, Tile tile){
         setTileAt(location.getRow(), location.getColumn(),
                 tile.getColor(), tile.getShape());
     }
 
+    //To undo the simulation
     public void undoSimulation(Location location){
         setTileAtToDefault(location.getRow(), location.getColumn());
     }
 
+    //To generate the available locations for specific tile from the deck.
     public Vector<Location> generateAvailableLocations(Tile tile, String turn, Location parent){
         Vector<Location> locations=new Vector<>();
         //Basically adds the newly extended paths of the old vector-1 to the new one.
@@ -238,12 +236,14 @@ public class GameBoard {
                         if(turn.equals("Human")){
                             Location newLocation=new Location(row, column,parent.getHumanScore()+getTempScoreAfterCheckIfLegal(),parent.getComputerScore());
                             newLocation.setHeuristicScore(Integer.MIN_VALUE);
+                            newLocation.setParentHeuristicScore(Integer.MAX_VALUE);
                             //newLocation.setParentHeuristicScore(Integer.MIN_VALUE);
                             locations.add(newLocation);
                         }
                         else{
                             Location newLocation=new Location(row, column, parent.getHumanScore(),parent.getComputerScore()+getTempScoreAfterCheckIfLegal());
                             newLocation.setHeuristicScore(Integer.MAX_VALUE);
+                            newLocation.setParentHeuristicScore(Integer.MIN_VALUE);
                             //newLocation.setParentHeuristicScore(Integer.MAX_VALUE);
                             locations.add(newLocation);
                         }
