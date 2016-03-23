@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import edu.ramapo.sminev.ishido.Model.GameModel;
 import edu.ramapo.sminev.ishido.Model.Location;
+import edu.ramapo.sminev.ishido.Model.Tile;
 import edu.ramapo.sminev.ishido.Model.Turn;
 import edu.ramapo.sminev.ishido.R;
 
@@ -205,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         //Just set the current turn to whoever won the toss and an empty board
         if(chosenOption.equals("1")){
             String turnStr=intent.getStringExtra("Turn");
+            gameModel.getDeck().initializeDeck();
             gameModel.getTurn().setNextTurn(turnStr);
             gameModel.getDeck().shuffleDeck();
         }
@@ -264,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(cutoffSpinner.getSelectedItemPosition()!=0) {
                     Long timeB = System.currentTimeMillis();
-                    suggestedLocation.setLocation(gameModel.getComputer().hint(gameModel, cutoffSpinner.getSelectedItemPosition()));
+                    suggestedLocation.setLocation(gameModel.getComputer().hint(gameModel, cutoffSpinner.getSelectedItemPosition(),alphaBeta.isChecked()));
 
                     Long timeA=System.currentTimeMillis();
                     Long time= timeA-timeB;

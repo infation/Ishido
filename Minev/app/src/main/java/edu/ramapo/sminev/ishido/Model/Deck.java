@@ -21,11 +21,15 @@ size() is used.
 public class Deck {
 
     //The data of tiles in the deck is
-    private Vector<Tile> deck=new Vector<>();
+    public Vector<Tile> deck=new Vector<>();
 
     //Default constructor, just for instantiation
     public Deck() {
-        /*deck.add(new Tile("White", "*"));
+
+    }
+
+    public void initializeDeck(){
+        deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "!"));
         deck.add(new Tile("White", "!"));
@@ -96,7 +100,7 @@ public class Deck {
         deck.add(new Tile("Green", "%"));
         deck.add(new Tile("Green", "%"));
         deck.add(new Tile("Green", "+"));
-        deck.add(new Tile("Green", "+"));*/
+        deck.add(new Tile("Green", "+"));
     }
 
     public void shuffleDeck(){
