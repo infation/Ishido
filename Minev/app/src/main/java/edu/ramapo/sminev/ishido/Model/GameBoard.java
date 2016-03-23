@@ -237,13 +237,13 @@ public class GameBoard {
                     if (checkIfLegalMove(row, column,tile)) {
                         if(turn.equals("Human")){
                             Location newLocation=new Location(row, column,parent.getHumanScore()+getTempScoreAfterCheckIfLegal(),parent.getComputerScore());
-                            newLocation.setHeuristicScore(Integer.MAX_VALUE);
+                            newLocation.setHeuristicScore(Integer.MIN_VALUE);
                             //newLocation.setParentHeuristicScore(Integer.MIN_VALUE);
                             locations.add(newLocation);
                         }
                         else{
                             Location newLocation=new Location(row, column, parent.getHumanScore(),parent.getComputerScore()+getTempScoreAfterCheckIfLegal());
-                            newLocation.setHeuristicScore(Integer.MIN_VALUE);
+                            newLocation.setHeuristicScore(Integer.MAX_VALUE);
                             //newLocation.setParentHeuristicScore(Integer.MAX_VALUE);
                             locations.add(newLocation);
                         }

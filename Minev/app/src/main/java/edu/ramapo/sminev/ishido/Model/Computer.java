@@ -52,14 +52,24 @@ public class Computer extends Player{
         }
     }
 
+    public Location hint(GameModel model,int cutoff){
+        setCutoff(cutoff);
+        Location root=new Location();
+            root.setLocation(MiniMaxAlgorithm(0, model.getBoard(),model.getDeck(), root, "Computer"));
+        return root;
+        //model.getHuman().addPoints(root.getComputerScore());
+        /*model.getBoard().setBlinkableTileAt(root.getRow(), root.getColumn(),
+                model.getDeck().getCurrentTile().getColor(), model.getDeck().getCurrentTile().getShape());*/
+        //model.getDeck().removeCurrentFromDeck();
+    }
+
     public void minimax(GameModel model, int cutoff,boolean alphaBeta){
         setCutoff(cutoff);
         Location root=new Location();
-
         if(alphaBeta) {
             root.setHeuristicScore(Integer.MIN_VALUE);
             root.setIsRoot(true);
-            root.setLocation(AlphaBetaPruning(0, model.getBoard(),model.getDeck(), root, "Computer"));
+            root.setLocation(AlphaBetaPruning(0, model.getBoard(), model.getDeck(), root, "Computer"));
         }
         else{
             root.setLocation(MiniMaxAlgorithm(0, model.getBoard(),model.getDeck(), root, "Computer"));
@@ -71,7 +81,6 @@ public class Computer extends Player{
                 model.getDeck().getCurrentTile().getColor(), model.getDeck().getCurrentTile().getShape());
         model.getDeck().removeCurrentFromDeck();
     }
-
 
     //The algorithm with which the computer will play.
     public Location MiniMaxAlgorithm(int deckIndex, GameBoard board, Deck deck, Location parent, String turn) {
@@ -176,22 +185,23 @@ public class Computer extends Player{
                         for(int j=i;j<generatedLocations.size();j++){
                             generatedLocations.get(j).setParentHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                         }
+                        parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                     }
-                    System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
-                            + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
+                    //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
+                      //      + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
                     //If the grandparent heuristics and the parent heuristics don't match then prune the other children
-                    if((!parent.getIsRoot())&&parent.getParentHeuristicScore()!=Integer.MAX_VALUE&&
+                    if(!(parent.getIsRoot())&&parent.getParentHeuristicScore()!=Integer.MAX_VALUE&&
                             parent.getParentHeuristicScore()<generatedLocations.get(i).getHeuristicScore()) {
                             //parent.setParentHeuristicScore(parent.getHeuristicScore());
                         //Return the state of the board
                         Location maximizedLocation = new Location();
                         maximizedLocation.setLocation(maximize(generatedLocations));
                         for(int j=i+1;j<generatedLocations.size();j++){
-                            System.out.println("Pruning location[" + generatedLocations.get(j).getRow() +
+                            System.out.println("Pruning minimizer location[" + generatedLocations.get(j).getRow() +
                                     "][" + generatedLocations.get(j).getColumn() + "] with score: " +
                                     generatedLocations.get(j).getHumanScore() + " | " + generatedLocations.get(j).getComputerScore());
                         }
-                        System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore() + "/" + generatedLocations.get(i).getHeuristicScore());
+                        //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore() + "/" + generatedLocations.get(i).getHeuristicScore());
                         return maximizedLocation;
                     }
                 }
@@ -214,20 +224,20 @@ public class Computer extends Player{
                         for(int j=i;j<generatedLocations.size();j++){
                             generatedLocations.get(j).setParentHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                         }
-                        //parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
+                        parent.setHeuristicScore(generatedLocations.get(i).getHeuristicScore());
                     }
 
                     //If the grandparent heuristics and the parent heuristics don't match then prune the other children
                     if((!parent.getIsRoot())&&parent.getParentHeuristicScore()!=Integer.MIN_VALUE
                             &&parent.getParentHeuristicScore()>generatedLocations.get(i).getHeuristicScore()) {
                         //parent.setParentHeuristicScore(parent.getHeuristicScore());
-                        System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
-                                + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
+                        //System.out.println("The parent/child have heuristic value of : " + parent.getHeuristicScore()
+                         //       + "/" + generatedLocations.get(i).getHeuristicScore()+"/"+parent.getParentHeuristicScore());
                         //Return the state of the board
                         Location maximizedLocation = new Location();
                         maximizedLocation.setLocation(maximize(generatedLocations));
                         for(int j=i+1;j<generatedLocations.size();j++){
-                            System.out.println("Pruning location[" + generatedLocations.get(j).getRow() +
+                            System.out.println("Pruning maximizer location[" + generatedLocations.get(j).getRow() +
                                     "][" + generatedLocations.get(j).getColumn() + "] with score: " +
                                     generatedLocations.get(j).getHumanScore() + " | " + generatedLocations.get(j).getComputerScore());
                         }

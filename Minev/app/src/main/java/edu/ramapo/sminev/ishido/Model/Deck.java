@@ -25,7 +25,7 @@ public class Deck {
 
     //Default constructor, just for instantiation
     public Deck() {
-        deck.add(new Tile("White", "*"));
+        /*deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "*"));
         deck.add(new Tile("White", "!"));
         deck.add(new Tile("White", "!"));
@@ -96,7 +96,7 @@ public class Deck {
         deck.add(new Tile("Green", "%"));
         deck.add(new Tile("Green", "%"));
         deck.add(new Tile("Green", "+"));
-        deck.add(new Tile("Green", "+"));
+        deck.add(new Tile("Green", "+"));*/
     }
 
     public void shuffleDeck(){

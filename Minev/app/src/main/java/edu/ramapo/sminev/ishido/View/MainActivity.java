@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     private Button nextButton;
     private Button saveGameButton;
     private TextView timeStamp;
+    private Button hint;
+    private Location suggestedLocation=new Location();
+    private boolean suggestionSet=false;
 
     //The view of the boardView
     private Button[][] boardView=new Button[MAX_ROWS][MAX_COLUMNS];
@@ -191,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
         turnView=(TextView)findViewById(R.id.turn_view);
         timeStamp=(TextView)findViewById(R.id.time_stamp_after);
         alphaBeta=(CheckBox)findViewById(R.id.alpha_beta);
+        hint=(Button)findViewById(R.id.hint_button);
 
         //Cutoff Spinner initialization
         cutoffSpinner=(Spinner)findViewById(R.id.cutoff_spinner);
@@ -254,7 +258,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        hint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                if(cutoffSpinner.getSelectedItemPosition()!=0) {
+                    Long timeB = System.currentTimeMillis();
+                    suggestedLocation.setLocation(gameModel.getComputer().hint(gameModel, cutoffSpinner.getSelectedItemPosition()));
+
+                    Long timeA=System.currentTimeMillis();
+                    Long time= timeA-timeB;
+                    Integer minutes = (int) ((time / (1000*60)) % 60);
+                    Integer seconds = (int) (time / 1000) % 60 ;
+                    Integer milliSecs= (int)(time - (minutes*1000*60+seconds*1000));
+
+                    timeStamp.setText("Took: " + minutes + " minutes, " + seconds + " seconds, " + milliSecs + " millisecs");
+                    updateTileView(gameModel.getDeck().getCurrentTile().getColor(), gameModel.getDeck().getCurrentTile().getShape()
+                            , boardView[suggestedLocation.getRow()][suggestedLocation.getColumn()]);
+                    gameModel.getHuman().addPoints(suggestedLocation.getComputerScore());
+                    humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                    Animation mAnimation = new AlphaAnimation(1, 0);
+                    mAnimation.setDuration(380);
+                    mAnimation.setInterpolator(new LinearInterpolator());
+                    mAnimation.setRepeatCount(Animation.INFINITE);
+                    mAnimation.setRepeatMode(Animation.REVERSE);
+                    boardView[suggestedLocation.getRow()][suggestedLocation.getColumn()].startAnimation(mAnimation);
+                    suggestionSet=true;
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Please select a cutoff value.", Toast.LENGTH_SHORT).show();
+                    cutoffSpinner.performClick();
+                }
+            }
+        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,9 +300,7 @@ public class MainActivity extends AppCompatActivity {
                         Long timeB = System.currentTimeMillis();
                         gameModel.getComputer().minimax(gameModel, cutoffSpinner.getSelectedItemPosition(), alphaBeta.isChecked());
 
-
                         Long timeA=System.currentTimeMillis();
-
                         Long time= timeA-timeB;
                         Integer minutes = (int) ((time / (1000*60)) % 60);
                         Integer seconds = (int) (time / 1000) % 60 ;
@@ -359,64 +393,121 @@ public class MainActivity extends AppCompatActivity {
                             if (!gameModel.getBoard().getTileAt(i, j).getIsTile()) {
                                 //Check if it's a legal move
                                 if (gameModel.getBoard().checkIfLegalMove(i, j, gameModel.getDeck().getCurrentTile())) {
-                                    gameModel.getBoard().addPointsToPlayerAfterCheckIfLegal(gameModel.getHuman());
-                                    //Set the tile in the board model
-                                    gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
-                                            gameModel.getDeck().getCurrentTile().getShape());
-                                    //Update the view's background...
-                                    updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                            gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
-                                    //Remove it from the deck
-                                    gameModel.getDeck().removeCurrentFromDeck();
-                                    updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
-                                            gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
-                                    //Update the score view
-                                    humanscoreView.setText(gameModel.getHuman().getScore().toString());
-                                    gameModel.getTurn().switchTurn();
-                                    turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
-                                    // get list items from strings.xml
-                                    drawerListViewItems.remove(0);
-                                    // Set the adapter for the list view
-                                    drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
-                                            R.layout.drawer_listview_item, drawerListViewItems));
+                                    if (suggestionSet) {
+                                        updateTileView("", "", boardView[suggestedLocation.getRow()][suggestedLocation.getColumn()]);
+                                        boardView[suggestedLocation.getRow()][suggestedLocation.getColumn()].clearAnimation();
+                                        gameModel.getHuman().setScore(gameModel.getHuman().getScore() - suggestedLocation.getComputerScore());
+                                        //humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                                        if(i==suggestedLocation.getRow()&&j==suggestedLocation.getColumn()){
+                                            gameModel.getBoard().setTileAt(suggestedLocation.getRow(), suggestedLocation.getColumn(),
+                                                    gameModel.getDeck().getCurrentTile().getColor(),
+                                                    gameModel.getDeck().getCurrentTile().getShape());
+                                            gameModel.getTurn().switchTurn();
+                                            gameModel.getHuman().addPoints(suggestedLocation.getComputerScore());
+                                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(), gameModel.getDeck().getCurrentTile().getShape()
+                                                    , boardView[suggestedLocation.getRow()][suggestedLocation.getColumn()]);
+                                            ///gameModel.getHuman().addPoints(suggestedLocation.getComputerScore());
+                                            humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                                            turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                                            gameModel.getDeck().removeCurrentFromDeck();
+                                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                    gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
 
-                                    //cutoffSpinner.setVisibility(View.VISIBLE);
-                                    setCutoffDropdownValues();
+                                            drawerListViewItems.remove(0);
+                                            // Set the adapter for the list view
+                                            drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                                    R.layout.drawer_listview_item, drawerListViewItems));
+                                            //setCutoffDropdownValues();
+                                            suggestionSet = false;
+                                        }
+                                        else{
+                                            suggestionSet=false;
+                                            gameModel.getBoard().addPointsToPlayerAfterCheckIfLegal(gameModel.getHuman());
+                                            //gameModel.getHuman().setScore(gameModel.getHuman().getScore()-suggestedLocation.getComputerScore());
+                                            //Set the tile in the board model
+                                            gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                                    gameModel.getDeck().getCurrentTile().getShape());
+                                            //Update the view's background...
+                                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                    gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
+                                            gameModel.getDeck().removeCurrentFromDeck();
+                                            updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                    gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                                            //Remove it from the deck
+                                            //Update the score view
+                                            humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                                            gameModel.getTurn().switchTurn();
+                                            turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                                            // get list items from strings.xml
+                                            drawerListViewItems.remove(0);
+                                            // Set the adapter for the list view
+                                            drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                                    R.layout.drawer_listview_item, drawerListViewItems));
 
-                                    //Check if the deck is empty, if not continue
-                                    if (gameModel.getDeck().size() == 0) {
-                                        if (gameModel.getHuman().getScore() > gameModel.getComputer().getScore()) {
-                                            //Going to the end credits activity
-                                            Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                                            String message = "Congratulations YOU WON!\n" +
-                                                    "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                    "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
-                                                    "Thank you for playing Ishido.\n" +
-                                                    "By Stanislav Minev";
-                                            endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                                            startActivity(endCredits);
-                                            finish();
-                                        } else {
-                                            Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
-                                            String message = "YOU LOST!\n" +
-                                                    "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
-                                                    "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
-                                                    "Thank you for playing Ishido.\n" +
-                                                    "By Stanislav Minev";
-                                            endCredits.putExtra(Intent.EXTRA_TEXT, message);
-                                            startActivity(endCredits);
-                                            finish();
+                                            //cutoffSpinner.setVisibility(View.VISIBLE);
+                                            //setCutoffDropdownValues();
                                         }
                                     }
-                                } else {
-                                    Toast.makeText(MainActivity.this, "You can't place the tile there.",
-                                            Toast.LENGTH_SHORT).show();
+                                    else{
+                                        gameModel.getBoard().addPointsToPlayerAfterCheckIfLegal(gameModel.getHuman());
+                                        //Set the tile in the board model
+                                        gameModel.getBoard().setTileAt(i, j, gameModel.getDeck().getCurrentTile().getColor(),
+                                                gameModel.getDeck().getCurrentTile().getShape());
+                                        //Update the view's background...
+                                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                gameModel.getDeck().getCurrentTile().getShape(), boardView[i][j]);
+                                        //Remove it from the deck
+                                        gameModel.getDeck().removeCurrentFromDeck();
+                                        updateTileView(gameModel.getDeck().getCurrentTile().getColor(),
+                                                gameModel.getDeck().getCurrentTile().getShape(), currentTileView);
+                                        //Update the score view
+                                        humanscoreView.setText(gameModel.getHuman().getScore().toString());
+                                        gameModel.getTurn().switchTurn();
+                                        turnView.setText("Turn: " + gameModel.getTurn().getCurrentTurn());
+                                        // get list items from strings.xml
+                                        drawerListViewItems.remove(0);
+                                        // Set the adapter for the list view
+                                        drawerListView.setAdapter(new ArrayAdapter<String>(MainActivity.this,
+                                                R.layout.drawer_listview_item, drawerListViewItems));
+
+                                        //cutoffSpinner.setVisibility(View.VISIBLE);
+                                        //setCutoffDropdownValues();
+
+                                        //Check if the deck is empty, if not continue
+                                        if (gameModel.getDeck().size() == 0) {
+                                            if (gameModel.getHuman().getScore() > gameModel.getComputer().getScore()) {
+                                                //Going to the end credits activity
+                                                Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                                String message = "Congratulations YOU WON!\n" +
+                                                        "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
+                                                        "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                        "Thank you for playing Ishido.\n" +
+                                                        "By Stanislav Minev";
+                                                endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                                startActivity(endCredits);
+                                                finish();
+                                            } else {
+                                                Intent endCredits = new Intent(MainActivity.this, EndCreditsActivity.class);
+                                                String message = "YOU LOST!\n" +
+                                                        "You scored " + gameModel.getHuman().getScore().toString() + " points.\n" +
+                                                        "The computer scored" + gameModel.getComputer().getScore().toString() + " points.\n" +
+                                                        "Thank you for playing Ishido.\n" +
+                                                        "By Stanislav Minev";
+                                                endCredits.putExtra(Intent.EXTRA_TEXT, message);
+                                                startActivity(endCredits);
+                                                finish();
+                                            }
+                                        }
+                                    }
+                                }
+                                else{
+                                        Toast.makeText(MainActivity.this, "You can't place the tile there.",
+                                                Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Toast.makeText(MainActivity.this, "You can't place the tile there.",
                                         Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     }
                 }
